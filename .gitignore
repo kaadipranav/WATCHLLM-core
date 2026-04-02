@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.next/
+dist/
+build/
+
+# Cloudflare / Wrangler
+.wrangler/
+.dev.vars
+dist-names.json
+
+# Environment / Secrets (IMPORTANT)
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# OS files
+.DS_Store
+Thumbs.db
