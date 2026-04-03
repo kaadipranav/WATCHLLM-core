@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "watchllm"
+version = "0.1.0"
+description = "Agent reliability testing for AI engineers"
+requires-python = ">=3.10"
+dependencies = [
+  "requests>=2.31.0",
+  "click>=8.1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "mypy", "ruff", "types-requests"]
+
+[project.scripts]
+watchllm = "watchllm.cli.main:cli"
