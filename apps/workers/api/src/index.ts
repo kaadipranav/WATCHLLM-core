@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { err, ok } from './lib/response';
+import simulationRouter from './routers/simulation-router';
 import type { Env } from './types/env';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -43,8 +44,7 @@ api.all('/agents/*', (c) => c.json(err('Not implemented', 501), 501));
 api.all('/agents', (c) => c.json(err('Not implemented', 501), 501));
 
 // Simulations (Phase 3)
-api.all('/simulations/*', (c) => c.json(err('Not implemented', 501), 501));
-api.all('/simulations', (c) => c.json(err('Not implemented', 501), 501));
+api.route('/simulations', simulationRouter);
 
 // API Keys (Phase 2)
 api.all('/keys/*', (c) => c.json(err('Not implemented', 501), 501));

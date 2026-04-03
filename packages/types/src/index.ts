@@ -64,6 +64,8 @@ export interface SimulationRow {
   id: SimulationId;
   agent_id: AgentId;
   user_id: UserId;
+  parent_sim_id: SimulationId | null;
+  fork_node_id: string | null;
   status: SimulationStatus;
   config_json: string;
   summary_r2_key: string | null;
@@ -139,6 +141,19 @@ export interface TraceGraph {
 export interface SimulationConfig {
   categories: AttackCategory[];
   threshold: string | null;
+  fork?: {
+    parent_sim_id: SimulationId;
+    fork_from_node: string;
+    new_input: unknown;
+  };
+}
+
+export interface SimulationQueueMessage {
+  simulation_id: SimulationId;
+  agent_id: AgentId;
+  user_id: UserId;
+  categories: AttackCategory[];
+  config_json: string;
 }
 
 // --- Tier Limits ---

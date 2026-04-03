@@ -16,6 +16,15 @@ bucket_name = "watchllm-traces"
 binding = "KV"
 id = "REPLACE_WITH_REAL_KV_ID"
 
+[[queues.consumers]]
+queue = "watchllm-simulation-queue"
+max_batch_size = 10
+max_batch_timeout = 5
+
+[[services]]
+binding = "CHAOS_WORKER"
+service = "watchllm-chaos"
+
 [vars]
 ENVIRONMENT = "production"
 
