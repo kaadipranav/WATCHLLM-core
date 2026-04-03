@@ -1,0 +1,11 @@
+{
+  "name": "watchllm",
+  "private": true,
+  "workspaces": ["apps/*", "apps/workers/*", "packages/*"],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/workers/api",
+    "deploy:api": "npm run deploy --workspace=apps/workers/api",
+    "migrate": "wrangler d1 migrations apply watchllm-db --local"
+  }
+}

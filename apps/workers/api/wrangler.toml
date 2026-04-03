@@ -1,0 +1,24 @@
+name = "watchllm-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "watchllm-db"
+database_id = "REPLACE_WITH_REAL_D1_ID"
+
+[[r2_buckets]]
+binding = "TRACES"
+bucket_name = "watchllm-traces"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_REAL_KV_ID"
+
+[vars]
+ENVIRONMENT = "production"
+
+[env.dev]
+[env.dev.vars]
+ENVIRONMENT = "development"
