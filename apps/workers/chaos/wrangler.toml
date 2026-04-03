@@ -16,6 +16,9 @@ bucket_name = "watchllm-traces"
 binding = "KV"
 id = "REPLACE_WITH_REAL_KV_ID"
 
+[ai]
+binding = "AI"
+
 [vars]
 ENVIRONMENT = "production"
 

@@ -1,10 +1,12 @@
-import type { D1Database, R2Bucket, KVNamespace } from '@cloudflare/workers-types';
+import type { D1Database, KVNamespace, Queue, R2Bucket } from '@cloudflare/workers-types';
+import type { SimulationQueueMessage } from '@watchllm/types';
 
 export interface Env {
   // Cloudflare bindings
   DB: D1Database;
   TRACES: R2Bucket;
   KV: KVNamespace;
+  SIMULATION_QUEUE: Queue<SimulationQueueMessage>;
 
   // Secrets (injected via Doppler -> wrangler secret put)
   BETTER_AUTH_SECRET: string;

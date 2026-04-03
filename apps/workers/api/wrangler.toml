@@ -16,6 +16,10 @@ bucket_name = "watchllm-traces"
 binding = "KV"
 id = "REPLACE_WITH_REAL_KV_ID"
 
+[[queues.producers]]
+binding = "SIMULATION_QUEUE"
+queue = "watchllm-simulation-queue"
+
 [vars]
 ENVIRONMENT = "production"
 

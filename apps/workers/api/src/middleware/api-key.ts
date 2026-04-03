@@ -1,66 +1,74 @@
-import type { ApiKeyRow, Tier } from '@watchllm/types';
 import bcrypt from 'bcryptjs';
-import { createMiddleware } from 'hono/factory';
+import type { UserId } from '@watchllm/types';
+import type { MiddlewareHandler } from 'hono';
 import { err } from '../lib/response';
-import type { RequestVariables } from '../types/context';
 import type { Env } from '../types/env';
+import { normalizeTier, type AuthVariables } from './auth-types';
 
-export const apiKeyMiddleware = createMiddleware<{
+interface ApiKeyAuthRow {
+  id: string;
+  user_id: string;
+  key_hash: string;
+  tier: string;
+}
+
+function buildPrefixCandidates(rawKey: string): string[] {
+  const prefixes = [8, 12, 16]
+    .map((length) => rawKey.slice(0, length))
+    .filter((value) => value.length > 0);
+
+  return Array.from(new Set(prefixes));
+}
+
+export const apiKeyMiddleware: MiddlewareHandler<{
   Bindings: Env;
-  Variables: RequestVariables;
-}>(async (c, next) => {
-  const header = c.req.header('X-WatchLLM-Api-Key');
-
-  if (!header || !header.startsWith('wllm_')) {
-    return c.json(err('Missing or invalid API key', 401), 401);
+  Variables: AuthVariables;
+}> = async (c, next) => {
+  const rawApiKey = c.req.header('X-WatchLLM-Api-Key');
+  if (!rawApiKey) {
+    return c.json(err('Unauthorized', 401), 401);
   }
 
-  const parts = header.slice(5).split('_');
-  const prefix = parts[0];
-
-  if (parts.length < 2 || !prefix) {
-    return c.json(err('Malformed API key', 401), 401);
+  const prefixCandidates = buildPrefixCandidates(rawApiKey);
+  if (prefixCandidates.length === 0) {
+    return c.json(err('Unauthorized', 401), 401);
   }
 
   const now = Math.floor(Date.now() / 1000);
-  const row = await c.env.DB.prepare(
-    `SELECT
-       ak.id,
-       ak.user_id,
-       ak.key_prefix,
-       ak.key_hash,
-       ak.name,
-       ak.expires_at,
-       ak.revoked_at,
-       ak.last_used_at,
-       ak.created_at,
-       u.tier
-     FROM api_keys ak
-     JOIN users u ON u.id = ak.user_id
-     WHERE ak.key_prefix = ?
-       AND ak.revoked_at IS NULL
-       AND (ak.expires_at IS NULL OR ak.expires_at > ?)
-     LIMIT 1`
+  const placeholders = prefixCandidates.map(() => '?').join(', ');
+  const matchingRows = await c.env.DB.prepare(
+    `SELECT k.id AS id, k.user_id AS user_id, k.key_hash AS key_hash, u.tier AS tier
+     FROM api_keys k
+     INNER JOIN users u ON u.id = k.user_id
+     WHERE k.key_prefix IN (${placeholders})
+       AND k.revoked_at IS NULL
+       AND (k.expires_at IS NULL OR k.expires_at > ?)`,
   )
-    .bind(prefix, now)
-    .first<ApiKeyRow & { tier: Tier }>();
+    .bind(...prefixCandidates, now)
+    .all<ApiKeyAuthRow>();
 
-  if (!row) {
-    return c.json(err('Invalid API key', 401), 401);
+  const rows = matchingRows.results ?? [];
+
+  let validKeyRow: ApiKeyAuthRow | null = null;
+  for (const row of rows) {
+    const isMatch = await bcrypt.compare(rawApiKey, row.key_hash);
+    if (isMatch) {
+      validKeyRow = row;
+      break;
+    }
   }
 
-  const isValid = await bcrypt.compare(header, row.key_hash);
-  if (!isValid) {
-    return c.json(err('Invalid API key', 401), 401);
+  if (!validKeyRow) {
+    return c.json(err('Unauthorized', 401), 401);
   }
 
-  void c.env.DB.prepare('UPDATE api_keys SET last_used_at = ? WHERE id = ?')
-    .bind(now, row.id)
+  await c.env.DB.prepare('UPDATE api_keys SET last_used_at = ? WHERE id = ?')
+    .bind(now, validKeyRow.id)
     .run();
 
-  c.set('userId', row.user_id);
-  c.set('userTier', row.tier);
+  c.set('userId', validKeyRow.user_id as UserId);
+  c.set('userTier', normalizeTier(validKeyRow.tier));
+  c.set('authMethod', 'api_key');
 
-  await next();
-  return;
-});
+  return next();
+};

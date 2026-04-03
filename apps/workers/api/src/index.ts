@@ -1,12 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { rateLimitMiddleware } from './middleware/rate-limit';
-import { agentRouter } from './routers/agent-router';
-import { authRouter } from './routers/auth-router';
-import { keyRouter } from './routers/key-router';
-import { projectRouter } from './routers/project-router';
 import { err, ok } from './lib/response';
+import simulationRouter from './routers/simulation-router';
 import type { Env } from './types/env';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -33,23 +29,31 @@ app.get('/health', (c) => {
   return c.json(ok({ status: 'ok', env: c.env.ENVIRONMENT }), 200);
 });
 
-// API v1 routes
-app.route('/api/v1/auth', authRouter);
-app.route('/api/v1/keys', keyRouter);
-app.route('/api/v1/projects', projectRouter);
-app.route('/api/v1/agents', agentRouter);
+// API v1 routes (stubs - implemented in later phases)
+const api = new Hono<{ Bindings: Env }>();
+
+// Auth routes (Phase 2)
+api.all('/auth/*', (c) => c.json(err('Not implemented', 501), 501));
+
+// Projects (Phase 2)
+api.all('/projects/*', (c) => c.json(err('Not implemented', 501), 501));
+api.all('/projects', (c) => c.json(err('Not implemented', 501), 501));
+
+// Agents (Phase 2)
+api.all('/agents/*', (c) => c.json(err('Not implemented', 501), 501));
+api.all('/agents', (c) => c.json(err('Not implemented', 501), 501));
 
 // Simulations (Phase 3)
-app.use('/api/v1/simulations/*', rateLimitMiddleware);
-app.use('/api/v1/simulations', rateLimitMiddleware);
-app.all('/api/v1/simulations/*', (c) => c.json(err('Not implemented', 501), 501));
-app.all('/api/v1/simulations', (c) => c.json(err('Not implemented', 501), 501));
+api.route('/simulations', simulationRouter);
+
+// API Keys (Phase 2)
+api.all('/keys/*', (c) => c.json(err('Not implemented', 501), 501));
+api.all('/keys', (c) => c.json(err('Not implemented', 501), 501));
 
 // Webhooks (Phase 6)
-app.use('/api/v1/webhooks/*', rateLimitMiddleware);
-app.use('/api/v1/webhooks', rateLimitMiddleware);
-app.all('/api/v1/webhooks/*', (c) => c.json(err('Not implemented', 501), 501));
-app.all('/api/v1/webhooks', (c) => c.json(err('Not implemented', 501), 501));
+api.all('/webhooks/*', (c) => c.json(err('Not implemented', 501), 501));
+
+app.route('/api/v1', api);
 
 // 404 fallback
 app.notFound((c) => {
