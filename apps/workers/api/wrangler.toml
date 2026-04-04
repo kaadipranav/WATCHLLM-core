@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "watchllm-db"
-database_id = "REPLACE_WITH_REAL_D1_ID"
+database_id = "0556967e-0919-42d0-a979-433bc08a21e3"
 
 [[r2_buckets]]
 binding = "TRACES"
@@ -14,7 +14,7 @@ bucket_name = "watchllm-traces"
 
 [[kv_namespaces]]
 binding = "KV"
-id = "REPLACE_WITH_REAL_KV_ID"
+id = "1a7d68c963294ea59d7b553a68be55c4"
 
 [[queues.producers]]
 binding = "SIMULATION_QUEUE"

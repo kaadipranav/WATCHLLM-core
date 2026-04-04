@@ -4,5 +4,5 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "watchllm-db"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "0556967e-0919-42d0-a979-433bc08a21e3"
 migrations_dir = "migrations"
