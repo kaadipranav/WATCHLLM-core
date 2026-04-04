@@ -6,7 +6,7 @@ npm install ogl
 
 # Usage
 
-'''
+'''typescript
 import Prism from './Prism';
 
 <div style={{ width: '100%', height: '600px', position: 'relative' }}>

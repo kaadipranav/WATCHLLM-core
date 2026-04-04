@@ -22,7 +22,13 @@ queue = "watchllm-simulation-queue"
 
 [vars]
 ENVIRONMENT = "production"
+PAYMENT_PROVIDER = "razorpay"
+RAZORPAY_PLAN_PRO = "plan_pro_monthly"
+RAZORPAY_PLAN_TEAM = "plan_team_monthly"
 
 [env.dev]
 [env.dev.vars]
 ENVIRONMENT = "development"
+PAYMENT_PROVIDER = "stripe"
+RAZORPAY_PLAN_PRO = "plan_dev_pro"
+RAZORPAY_PLAN_TEAM = "plan_dev_team"

@@ -2,7 +2,13 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { err, ok } from './lib/response';
+import { agentRouter } from './routers/agent-router';
+import { authRouter } from './routers/auth-router';
+import billingRouter from './routers/billing-router';
+import { keyRouter } from './routers/key-router';
+import { projectRouter } from './routers/project-router';
 import simulationRouter from './routers/simulation-router';
+import webhookRouter from './routers/webhook-router';
 import type { Env } from './types/env';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -29,29 +35,29 @@ app.get('/health', (c) => {
   return c.json(ok({ status: 'ok', env: c.env.ENVIRONMENT }), 200);
 });
 
-// API v1 routes (stubs - implemented in later phases)
+// API v1 routes
 const api = new Hono<{ Bindings: Env }>();
 
-// Auth routes (Phase 2)
-api.all('/auth/*', (c) => c.json(err('Not implemented', 501), 501));
+// Auth routes
+api.route('/auth', authRouter);
 
-// Projects (Phase 2)
-api.all('/projects/*', (c) => c.json(err('Not implemented', 501), 501));
-api.all('/projects', (c) => c.json(err('Not implemented', 501), 501));
+// Projects
+api.route('/projects', projectRouter);
 
-// Agents (Phase 2)
-api.all('/agents/*', (c) => c.json(err('Not implemented', 501), 501));
-api.all('/agents', (c) => c.json(err('Not implemented', 501), 501));
+// Agents
+api.route('/agents', agentRouter);
 
-// Simulations (Phase 3)
+// Simulations
 api.route('/simulations', simulationRouter);
 
-// API Keys (Phase 2)
-api.all('/keys/*', (c) => c.json(err('Not implemented', 501), 501));
-api.all('/keys', (c) => c.json(err('Not implemented', 501), 501));
+// API Keys
+api.route('/keys', keyRouter);
 
-// Webhooks (Phase 6)
-api.all('/webhooks/*', (c) => c.json(err('Not implemented', 501), 501));
+// Billing
+api.route('/billing', billingRouter);
+
+// Webhooks
+api.route('/webhooks', webhookRouter);
 
 app.route('/api/v1', api);
 
