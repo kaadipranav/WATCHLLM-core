@@ -6,7 +6,7 @@ node_modules/
 .evn.production
 dist/
 .next/
-apps/web/.open-next/
+.vercel/
 pycache/
 *.pyc
 .doppler/

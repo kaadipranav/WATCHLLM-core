@@ -6,10 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cf:build": "opennextjs-cloudflare build",
-    "cf:deploy": "opennextjs-cloudflare deploy",
-    "deploy": "npm run cf:build && npm run cf:deploy",
-    "pages:build": "npm run cf:build"
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:deploy": "wrangler pages deploy .vercel/output/static --project-name watchllm-web",
+    "deploy": "npm run pages:build && npm run pages:deploy"
   },
   "dependencies": {
     "next": "14.2.33",
@@ -17,7 +16,7 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "1.10.0",
+    "@cloudflare/next-on-pages": "1.13.13",
     "@types/node": "20.14.15",
     "@types/react": "18.3.3",
     "typescript": "5.5.4",

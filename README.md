@@ -347,9 +347,19 @@ watchllm replay --simulation sim_xxx
 - API deploy script: `npm run deploy:api`
 - Orchestrator and Chaos deploy via each workspace deploy script.
 - Ensure Cloudflare account credentials, Wrangler auth, and bound resource IDs match target environment before deployment.
-- Web app (`apps/web`) deploys with OpenNext on Cloudflare Workers.
+- Web app (`apps/web`) deploys on Cloudflare Pages.
 
-Web deployment via CLI (exact sequence):
+Cloudflare Pages (recommended):
+
+1. Create or open the Pages project and connect this repository.
+2. Set Root directory to `apps/web`.
+3. Build command: `npm run pages:build`.
+4. Build output directory: `.vercel/output/static`.
+5. Configure production environment variables in Pages settings:
+  - `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
+  - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `razorpay`)
+
+Optional CLI deployment flow:
 
 1. Set Cloudflare auth for the current shell:
   - `$env:CLOUDFLARE_API_TOKEN="..."`
@@ -357,21 +367,10 @@ Web deployment via CLI (exact sequence):
 2. Set build-time public env vars:
   - `$env:NEXT_PUBLIC_API_URL="https://watchllm-api.watchllm.workers.dev"`
   - `$env:NEXT_PUBLIC_PAYMENT_PROVIDER="razorpay"`
-3. Build the OpenNext bundle:
-  - `npm run cf:build --workspace=@watchllm/web`
-4. Deploy the web worker:
-  - `npm run cf:deploy --workspace=@watchllm/web`
-
-Windows fallback (if `cf:deploy` fails with ESM path-scheme issue):
-
-- `npx wrangler deploy --config apps/web/wrangler.jsonc`
-
-Required env vars for web build:
-
-- `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
-- `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `razorpay`)
-
-If you prefer dashboard-based builds, use Cloudflare's repo import for Workers and run the same build command (`npm run cf:build --workspace=@watchllm/web`) before deploy.
+3. Build the Pages output:
+  - `npm run pages:build --workspace=@watchllm/web`
+4. Deploy to Pages:
+  - `npm run pages:deploy --workspace=@watchllm/web`
 
 ## License
 
