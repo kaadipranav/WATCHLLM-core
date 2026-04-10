@@ -347,17 +347,31 @@ watchllm replay --simulation sim_xxx
 - API deploy script: `npm run deploy:api`
 - Orchestrator and Chaos deploy via each workspace deploy script.
 - Ensure Cloudflare account credentials, Wrangler auth, and bound resource IDs match target environment before deployment.
-- Web app (`apps/web`) deploys on Cloudflare Pages.
+- Web app (`apps/web`) deploys with OpenNext on Cloudflare Workers.
 
-Cloudflare Pages (first-time setup):
+Web deployment via CLI (exact sequence):
 
-- Import this repository in Pages and select branch `main`.
-- Set Root directory to `apps/web`.
-- Build command: `npm run pages:build`.
-- Output directory: `.vercel/output/static`.
-- Add env vars:
-  - `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
-  - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `razorpay`)
+1. Set Cloudflare auth for the current shell:
+  - `$env:CLOUDFLARE_API_TOKEN="..."`
+  - `$env:CLOUDFLARE_ACCOUNT_ID="..."`
+2. Set build-time public env vars:
+  - `$env:NEXT_PUBLIC_API_URL="https://watchllm-api.watchllm.workers.dev"`
+  - `$env:NEXT_PUBLIC_PAYMENT_PROVIDER="razorpay"`
+3. Build the OpenNext bundle:
+  - `npm run cf:build --workspace=@watchllm/web`
+4. Deploy the web worker:
+  - `npm run cf:deploy --workspace=@watchllm/web`
+
+Windows fallback (if `cf:deploy` fails with ESM path-scheme issue):
+
+- `npx wrangler deploy --config apps/web/wrangler.jsonc`
+
+Required env vars for web build:
+
+- `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
+- `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `razorpay`)
+
+If you prefer dashboard-based builds, use Cloudflare's repo import for Workers and run the same build command (`npm run cf:build --workspace=@watchllm/web`) before deploy.
 
 ## License
 
