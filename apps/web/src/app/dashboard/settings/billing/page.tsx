@@ -26,7 +26,10 @@ type ApiResponse<T> = {
 const api = {
   billing: {
     async checkout(tier: BillingTier): Promise<CheckoutResponse> {
-      const response = await fetch('/api/v1/billing/checkout', {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
+      const endpoint = `${baseUrl.replace(/\/$/, '')}/api/v1/billing/checkout`;
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,12 +73,14 @@ export default function BillingPage(): JSX.Element {
   }
 
   return (
-    <main style={{ padding: '2rem' }}>
-      <h1>Billing</h1>
-      <p>Choose a plan to upgrade your workspace.</p>
+    <main className="billing-wrap">
+      <section className="surface-card billing-card">
+        <h1 className="billing-title">Billing</h1>
+        <p className="billing-subtitle">Choose a plan to upgrade your workspace.</p>
 
-      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <div className="billing-actions">
         <button
+          className="btn btn-primary"
           type="button"
           onClick={() => {
             void handleUpgrade('pro');
@@ -86,6 +91,7 @@ export default function BillingPage(): JSX.Element {
         </button>
 
         <button
+          className="btn btn-ghost"
           type="button"
           onClick={() => {
             void handleUpgrade('team');
@@ -94,9 +100,10 @@ export default function BillingPage(): JSX.Element {
         >
           {loadingTier === 'team' ? 'Redirecting...' : 'Upgrade to Team'}
         </button>
-      </div>
+        </div>
 
-      {errorMessage ? <p style={{ color: '#ff4444' }}>{errorMessage}</p> : null}
+        {errorMessage ? <p className="billing-error">{errorMessage}</p> : null}
+      </section>
     </main>
   );
 }

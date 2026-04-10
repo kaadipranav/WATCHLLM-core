@@ -347,6 +347,17 @@ watchllm replay --simulation sim_xxx
 - API deploy script: `npm run deploy:api`
 - Orchestrator and Chaos deploy via each workspace deploy script.
 - Ensure Cloudflare account credentials, Wrangler auth, and bound resource IDs match target environment before deployment.
+- Web app (`apps/web`) deploys on Cloudflare Pages.
+
+Cloudflare Pages (first-time setup):
+
+- Import this repository in Pages and select branch `main`.
+- Set Root directory to `apps/web`.
+- Build command: `npm run pages:build`.
+- Output directory: `.vercel/output/static`.
+- Add env vars:
+  - `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
+  - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `razorpay`)
 
 ## License
 
