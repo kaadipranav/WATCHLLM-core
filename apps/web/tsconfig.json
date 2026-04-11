@@ -15,7 +15,10 @@
     "jsx": "preserve",
     "incremental": true,
     "plugins": [{ "name": "next" }],
-    "types": ["next", "node"]
+    "types": ["next", "node"],
+    "paths": {
+      "@watchllm/types": ["../../packages/types/src/index.ts"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
