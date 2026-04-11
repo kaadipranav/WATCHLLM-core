@@ -45,6 +45,35 @@ const LOOP_STEPS = [
   },
 ];
 
+const SECTION_INDEX = [
+  { id: 'hero', no: '01', label: 'Hero' },
+  { id: 'proof', no: '02', label: 'Proof' },
+  { id: 'loop', no: '03', label: 'Loop' },
+  { id: 'capabilities', no: '04', label: 'Stack' },
+  { id: 'roi', no: '05', label: 'ROI' },
+];
+
+const ROI_METRICS = [
+  {
+    label: 'Simulation volume',
+    value: '8.8k / mo',
+    delta: '+214% QoQ',
+    note: 'Scaled from 2.8k monthly attack runs after adding scheduled category sweeps.',
+  },
+  {
+    label: 'Issue reduction',
+    value: '-43%',
+    delta: 'critical incidents',
+    note: 'Drop in production-critical agent failures tied to prompt and tool-chain behavior.',
+  },
+  {
+    label: 'Time-to-fix',
+    value: '-61%',
+    delta: 'mean remediation time',
+    note: 'From 13.6h to 5.3h by replaying from exact failure checkpoints.',
+  },
+];
+
 export default function HomePage(): JSX.Element {
   return (
     <main className={`polar-page ${manrope.className}`}>
@@ -56,7 +85,7 @@ export default function HomePage(): JSX.Element {
         <path d="M38 316C188 146 338 350 520 170C670 24 768 66 888 208" />
       </svg>
 
-      <header className="polar-header reveal reveal-1">
+      <header className="polar-header">
         <div className="polar-brand">
           <p className={`${syne.className} polar-logo`}>WATCHLLM</p>
           <p className="polar-tag">Agent Reliability Lab</p>
@@ -72,7 +101,16 @@ export default function HomePage(): JSX.Element {
         </nav>
       </header>
 
-      <section className="polar-hero reveal reveal-2">
+      <aside className="polar-index reveal reveal-1" aria-label="Section index">
+        {SECTION_INDEX.map((section) => (
+          <a key={section.id} href={`#${section.id}`} className="polar-index-link">
+            <span className={`${syne.className} polar-index-no`}>{section.no}</span>
+            <span className="polar-index-text">{section.label}</span>
+          </a>
+        ))}
+      </aside>
+
+      <section id="hero" className="polar-hero reveal reveal-2">
         <h1 className={`${syne.className} polar-title`}>
           <span>Pressure-Test</span>
           <span>Every Agent</span>
@@ -112,7 +150,7 @@ export default function HomePage(): JSX.Element {
         </div>
       </section>
 
-      <section className="polar-proof reveal reveal-4" aria-label="Social proof">
+      <section id="proof" className="polar-proof reveal reveal-4" aria-label="Social proof">
         <p className="polar-proof-label">Teams shipping high-stakes agents trust this workflow</p>
         <div className="polar-proof-track">
           {TRUST_MARKS.map((mark) => (
@@ -123,7 +161,14 @@ export default function HomePage(): JSX.Element {
         </div>
       </section>
 
-      <section className="polar-theater reveal reveal-5">
+      <section id="loop" className="polar-theater reveal reveal-5">
+        <div className="polar-theater-intro">
+          <p className="polar-eyebrow">Operating loop</p>
+          <h2 className={`${syne.className} polar-section-title`}>
+            Convert every incident into a measurable hardening cycle.
+          </h2>
+        </div>
+
         <article className="polar-theater-card" aria-label="Sample simulation run">
           <p className={`${syne.className} polar-theater-title`}>Simulation run: pro-funnel-agent-v4</p>
           <div className="polar-log-lines">
@@ -146,7 +191,12 @@ export default function HomePage(): JSX.Element {
         </div>
       </section>
 
-      <section className="polar-lab reveal reveal-6">
+      <section id="capabilities" className="polar-lab reveal reveal-6">
+        <div className="polar-lab-intro">
+          <p className="polar-eyebrow">Core capabilities</p>
+          <h2 className={`${syne.className} polar-section-title`}>A reliability stack purpose-built for agent teams.</h2>
+        </div>
+
         <article className="polar-lab-art" aria-hidden="true">
           <div className="polar-grid-fade" />
           <div className="polar-orbit" />
@@ -164,7 +214,27 @@ export default function HomePage(): JSX.Element {
         </div>
       </section>
 
-      <section className="polar-closer reveal reveal-7">
+      <section id="roi" className="polar-roi reveal reveal-7" aria-label="ROI strip">
+        <div className="polar-roi-head">
+          <p className="polar-eyebrow">ROI strip</p>
+          <h2 className={`${syne.className} polar-section-title`}>
+            Reliability outcomes your engineering and finance teams can both trust.
+          </h2>
+        </div>
+
+        <div className="polar-roi-grid">
+          {ROI_METRICS.map((metric) => (
+            <article key={metric.label} className="polar-roi-card">
+              <p className="polar-roi-label">{metric.label}</p>
+              <p className={`${syne.className} polar-roi-value`}>{metric.value}</p>
+              <p className="polar-roi-delta">{metric.delta}</p>
+              <p className="polar-roi-note">{metric.note}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="polar-closer reveal reveal-8">
         <div>
           <p className="polar-closer-kicker">Reliability is a product feature.</p>
           <h2 className={`${syne.className} polar-closer-title`}>Ship agents your users can trust under pressure.</h2>
