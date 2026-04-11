@@ -353,8 +353,8 @@ Cloudflare Pages (recommended):
 
 1. Create or open the Pages project and connect this repository.
 2. Set Root directory to `apps/web`.
-3. Build command: `npm run pages:build`.
-4. Build output directory: `.vercel/output/static`.
+3. Build command: `npm run build`.
+4. Build output directory: `out`.
 5. Configure production environment variables in Pages settings:
   - `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
   - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `razorpay`)
@@ -371,6 +371,10 @@ Optional CLI deployment flow:
   - `npm run pages:build --workspace=@watchllm/web`
 4. Deploy to Pages:
   - `npm run pages:deploy --workspace=@watchllm/web`
+
+Current production web URL:
+
+- `https://watchllm-web.pages.dev`
 
 ## License
 

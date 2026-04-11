@@ -1,12 +1,12 @@
 # Install
 
-'''
+```
 npm install ogl
-'''
+```
 
 # Usage
 
-'''typescript
+```typescript
 import Prism from './Prism';
 
 <div style={{ width: '100%', height: '600px', position: 'relative' }}>
@@ -22,11 +22,11 @@ import Prism from './Prism';
     glow={1}
   />
 </div>
-'''
+```
 
 # code
 
-'''typescript
+```typescript
 import React, { useEffect, useRef } from 'react';
 import { Renderer, Triangle, Program, Mesh } from 'ogl';
 
@@ -485,6 +485,6 @@ const Prism: React.FC<PrismProps> = ({
 
 export default Prism;
 
-'''
+```
 
 ---
