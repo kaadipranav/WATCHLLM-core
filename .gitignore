@@ -1,14 +1,33 @@
+# Dependencies
 node_modules/
-.wrangler/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment — secrets managed via Doppler, never committed
 .env
-.env.local
-.env.production
-.evn.production
+.env.*
+!.env.example
+
+# Build outputs
 dist/
 .next/
-.vercel/
 out/
 apps/web/out/
-pycache/
-*.pyc
+.vercel/
 .doppler/
+
+# Cloudflare
+.wrangler/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Misc
+*.log
+.mypy_cache/

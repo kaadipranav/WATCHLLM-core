@@ -5,6 +5,15 @@ import { useEffect, useState } from 'react';
 import { simulations, agents } from '../../../../lib/api';
 import type { SimulationRow, SimRunRow, TraceGraph } from '@watchllm/types';
 
+// Required by Next.js output: 'export' for dynamic segments.
+// Empty array = no pages pre-built; the shell is served and params read client-side.
+export function generateStaticParams() {
+  return [];
+}
+
+export const dynamicParams = false;
+
+
 const CATEGORY_ICONS: Record<string, string> = {
   prompt_injection: '💉', tool_abuse: '🔧', hallucination: '👻',
   context_poisoning: '☣️', infinite_loop: '🔁', jailbreak: '⛓️',

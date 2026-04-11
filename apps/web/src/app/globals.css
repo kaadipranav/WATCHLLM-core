@@ -3,42 +3,42 @@
    "concern-ingly good" — terminal-dark, LLM-native
    =================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+/* Geist fonts loaded via next/font in layout.tsx — no @import needed */
 
 /* ── Tokens ── */
 :root {
-  /* Palette */
-  --bg:              #060608;
-  --bg-grid:         rgba(255, 255, 255, 0.022);
-  --surface:         #0c0c10;
-  --surface-2:       #111118;
-  --surface-3:       #18181f;
-  --border:          rgba(255, 255, 255, 0.07);
-  --border-strong:   rgba(255, 255, 255, 0.14);
+  /* Palette — spec: copilot-instructions.md */
+  --bg:              #080808;
+  --bg-grid:         rgba(255, 255, 255, 0.02);
+  --surface:         #0f0f0f;
+  --surface-2:       #161616;
+  --surface-3:       #1e1e1e;
+  --border:          rgba(255, 255, 255, 0.08);
+  --border-strong:   rgba(255, 255, 255, 0.16);
 
   /* Brand */
-  --accent:          #00e5a0;
-  --accent-dim:      rgba(0, 229, 160, 0.12);
-  --accent-glow:     rgba(0, 229, 160, 0.35);
+  --accent:          #00C896;
+  --accent-dim:      rgba(0, 200, 150, 0.12);
+  --accent-glow:     rgba(0, 200, 150, 0.3);
   --accent-2:        #7c6aff;
   --accent-2-dim:    rgba(124, 106, 255, 0.12);
 
   /* Status */
-  --success:         #00e5a0;
-  --warning:         #f5a623;
-  --danger:          #ff4d6d;
-  --danger-dim:      rgba(255, 77, 109, 0.12);
+  --success:         #00C896;
+  --warning:         #f59e0b;
+  --danger:          #ff4444;
+  --danger-dim:      rgba(255, 68, 68, 0.12);
   --info:            #3b82f6;
 
   /* Text */
-  --text-primary:    #eeeef2;
-  --text-secondary:  #8b8b9a;
-  --text-tertiary:   #55556a;
+  --text-primary:    #f0f0f0;
+  --text-secondary:  #888888;
+  --text-tertiary:   #4a4a4a;
   --text-accent:     var(--accent);
 
-  /* Typography */
-  --font-display:    'Space Grotesk', sans-serif;
-  --font-mono:       'IBM Plex Mono', monospace;
+  /* Typography — Geist loaded via next/font/google in layout.tsx */
+  --font-display:    var(--font-geist), 'Geist', sans-serif;
+  --font-mono:       var(--font-geist-mono), 'Geist Mono', monospace;
 
   /* Spacing */
   --sp-1: 4px;
@@ -53,25 +53,25 @@
   --sp-16: 64px;
   --sp-24: 96px;
 
-  /* Radius */
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 16px;
-  --r-xl: 24px;
+  /* Radius — spec: max 8px, pills 9999px */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
+  --r-xl: 8px;
   --r-full: 9999px;
 
   /* Shadows */
-  --shadow-sm:   0 1px 3px rgba(0,0,0,0.4);
-  --shadow-md:   0 4px 16px rgba(0,0,0,0.5);
-  --shadow-lg:   0 8px 32px rgba(0,0,0,0.6);
-  --shadow-glow: 0 0 24px rgba(0, 229, 160, 0.2);
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.5);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.6);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,0.7);
+  --shadow-glow: 0 0 24px rgba(0, 200, 150, 0.15);
 
-  /* Transitions */
-  --ease:     cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --t-fast:   120ms;
-  --t-normal: 200ms;
-  --t-slow:   350ms;
+  /* Transitions — spec: 150ms ease only */
+  --ease:     ease;
+  --ease-out: ease;
+  --t-fast:   100ms;
+  --t-normal: 150ms;
+  --t-slow:   150ms;
 
   /* Layout */
   --sidebar-w:   240px;

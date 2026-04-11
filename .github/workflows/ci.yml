@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  typecheck-web:
+    name: Typecheck — web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit --project apps/web/tsconfig.json
+
+  typecheck-api:
+    name: Typecheck — api worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit --project apps/workers/api/tsconfig.json
+
+  build-web:
+    name: Build — Next.js static export
+    runs-on: ubuntu-latest
+    needs: [typecheck-web]
+    env:
+      NEXT_PUBLIC_API_URL: https://api.watchllm.dev
+      NEXT_PUBLIC_PAYMENT_PROVIDER: stripe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run pages:build --workspace=@watchllm/web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-out
+          path: apps/web/out/
+          retention-days: 7
