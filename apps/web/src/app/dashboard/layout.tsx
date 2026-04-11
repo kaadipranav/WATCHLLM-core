@@ -5,7 +5,19 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../lib/auth-context';
 
-const NAV = [
+type NavItem = {
+  href: string;
+  label: string;
+  exact?: boolean;
+  icon: React.ReactNode;
+};
+
+type NavGroup = {
+  section: string;
+  items: NavItem[];
+};
+
+const NAV: NavGroup[] = [
   {
     section: 'Overview',
     items: [
