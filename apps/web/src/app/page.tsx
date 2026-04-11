@@ -6,19 +6,19 @@ const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700
 
 const CAPABILITIES = [
   {
-    title: 'Prompt attack rehearsals',
+    title: 'Adversarial category matrix',
     description:
-      'Simulate jailbreaks, role confusion, and context poisoning before users ever see unstable behavior.',
+      'Run prompt injection, tool abuse, hallucination, and role-confusion attacks against every release candidate.',
   },
   {
-    title: 'Trace-first debugging',
+    title: 'Replayable execution graphs',
     description:
-      'Replay every node in the execution graph and isolate exactly where tool calls or memory decisions derailed.',
+      'Inspect node-by-node execution and pinpoint where context, tool routing, or policy checks actually failed.',
   },
   {
-    title: 'Severity scoring',
+    title: 'Fork-and-fix workflow',
     description:
-      'Use rule scoring plus judge verdicts to prioritize fixes by impact, not by noise.',
+      'Branch directly from the failure node, patch the prompt or tool logic, and verify the same path in minutes.',
   },
 ];
 
@@ -30,46 +30,62 @@ export default function HomePage(): JSX.Element {
       <div className="polar-ring polar-ring-right" aria-hidden="true" />
 
       <svg className="polar-scribble" viewBox="0 0 930 420" aria-hidden="true">
-        <path d="M40 330C220 150 390 380 580 180C700 62 790 70 900 210" />
+        <path d="M38 316C188 146 338 350 520 170C670 24 768 66 888 208" />
       </svg>
 
       <header className="polar-header reveal reveal-1">
-        <p className={`${syne.className} polar-logo`}>WATCHLLM</p>
+        <div className="polar-brand">
+          <p className={`${syne.className} polar-logo`}>WATCHLLM</p>
+          <p className="polar-tag">Agent Reliability Lab</p>
+        </div>
         <nav className="polar-nav" aria-label="Primary">
-          <button type="button" className="polar-chip polar-chip-round" aria-label="Toggle controls">
-            -
-          </button>
-          <a className="polar-chip polar-chip-dark" href="mailto:team@watchllm.dev">
-            LET&apos;S TALK
+          <span className="polar-chip polar-chip-light">LIVE CHAOS RIG</span>
+          <Link className="polar-chip polar-chip-dark" href="/dashboard">
+            OPEN DASHBOARD
+          </Link>
+          <a className="polar-chip polar-chip-outline" href="mailto:team@watchllm.dev">
+            TALK TO US
           </a>
-          <button type="button" className="polar-chip polar-chip-light" aria-label="Open menu">
-            MENU ..
-          </button>
         </nav>
       </header>
 
       <section className="polar-hero reveal reveal-2">
         <h1 className={`${syne.className} polar-title`}>
-          <span>Where Creative Agents</span>
-          <span>Become Unbreakable</span>
-          <span>Experiences</span>
+          <span>Pressure-Test</span>
+          <span>Every Agent</span>
+          <span>Path</span>
         </h1>
       </section>
 
       <section className="polar-intro reveal reveal-3">
         <p>
-          We combine adversarial simulation, graph replay, and strict severity scoring to build AI products
-          that feel sharp under pressure, not fragile after launch.
+          WatchLLM intentionally breaks your agent in controlled scenarios, captures every decision as a graph,
+          and gives your team a direct route from failure to verified fix.
         </p>
 
         <div className="polar-intro-actions">
           <Link className="polar-approach" href="/dashboard/settings/billing">
             <span className="polar-dot" aria-hidden="true" />
-            OUR APPROACH
+            START STRESS SIM
           </Link>
-          <Link className="polar-secondary-link" href="/dashboard">
-            Open dashboard
+          <Link className="polar-secondary-link" href="/dashboard/simulations">
+            Explore simulations
           </Link>
+        </div>
+
+        <div className="polar-metrics" aria-label="Platform highlights">
+          <article className="polar-metric">
+            <p className={`${syne.className} polar-metric-value`}>8</p>
+            <p className="polar-metric-label">attack categories</p>
+          </article>
+          <article className="polar-metric">
+            <p className={`${syne.className} polar-metric-value`}>0.7+</p>
+            <p className="polar-metric-label">critical severity threshold</p>
+          </article>
+          <article className="polar-metric">
+            <p className={`${syne.className} polar-metric-value`}>3.2s</p>
+            <p className="polar-metric-label">median run feedback time</p>
+          </article>
         </div>
       </section>
 

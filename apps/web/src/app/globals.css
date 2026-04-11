@@ -876,19 +876,21 @@ h4 { font-size: 1rem; }
 
 /* ── Polarized Landing Page ── */
 .polar-page {
-  --polar-bg: #d7dae3;
-  --polar-ink: #05060b;
-  --polar-muted: #1b1f2a;
-  --polar-blue: #2f3eff;
-  --polar-aqua: #58dde1;
-  --polar-shell: rgba(255, 255, 255, 0.42);
+  --polar-bg: #05070c;
+  --polar-bg-soft: #0b0f18;
+  --polar-ink: #edf2ff;
+  --polar-muted: #9ba4bd;
+  --polar-blue: #4f67ff;
+  --polar-aqua: #2de2e6;
+  --polar-warm: #ff6d45;
+  --polar-shell: rgba(20, 27, 44, 0.72);
 
   position: relative;
   min-height: 100dvh;
   overflow: clip;
   isolation: isolate;
   padding: clamp(1.2rem, 2.7vw, 2.5rem) clamp(1rem, 4.2vw, 3.9rem) clamp(3rem, 8vw, 6.5rem);
-  background: var(--polar-bg);
+  background: radial-gradient(circle at 12% 14%, #0f1a2d 0%, var(--polar-bg) 42%) fixed;
   color: var(--polar-ink);
 }
 
@@ -897,9 +899,9 @@ h4 { font-size: 1rem; }
   position: absolute;
   inset: -15% -10%;
   background:
-    radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.65), transparent 48%),
-    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.3), transparent 45%),
-    linear-gradient(125deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0));
+    radial-gradient(circle at 6% 22%, rgba(79, 103, 255, 0.22), transparent 35%),
+    radial-gradient(circle at 87% 11%, rgba(45, 226, 230, 0.13), transparent 34%),
+    radial-gradient(circle at 72% 81%, rgba(255, 109, 69, 0.08), transparent 40%);
   z-index: -3;
 }
 
@@ -908,10 +910,9 @@ h4 { font-size: 1rem; }
   inset: 0;
   z-index: -2;
   pointer-events: none;
-  mix-blend-mode: screen;
   background:
-    radial-gradient(60rem 32rem at 28% 24%, rgba(255, 255, 255, 0.24), transparent 62%),
-    radial-gradient(44rem 30rem at 73% 40%, rgba(84, 223, 229, 0.12), transparent 65%);
+    linear-gradient(130deg, rgba(255, 255, 255, 0.03), transparent 45%),
+    radial-gradient(52rem 30rem at 38% 30%, rgba(255, 255, 255, 0.02), transparent 64%);
 }
 
 .polar-ring {
@@ -920,46 +921,46 @@ h4 { font-size: 1rem; }
   pointer-events: none;
   z-index: -1;
   border: clamp(12px, 1.4vw, 22px) solid;
-  opacity: 0.9;
-  filter: blur(0.2px);
-  animation: polar-drift 11s ease-in-out infinite alternate;
+  opacity: 0.84;
+  filter: blur(0.5px);
+  animation: polar-drift 12s ease-in-out infinite alternate;
 }
 
 .polar-ring-left {
-  width: min(58vw, 58rem);
-  height: min(58vw, 58rem);
-  left: max(-27vw, -22rem);
-  top: 7rem;
-  border-color: var(--polar-blue);
+  width: min(55vw, 52rem);
+  height: min(55vw, 52rem);
+  left: max(-28vw, -20rem);
+  top: 10rem;
+  border-color: rgba(79, 103, 255, 0.84);
 }
 
 .polar-ring-right {
-  width: min(44vw, 40rem);
-  height: min(44vw, 40rem);
-  right: max(-16vw, -13rem);
-  top: -5rem;
-  border-color: var(--polar-aqua);
-  animation-duration: 14s;
+  width: min(40vw, 35rem);
+  height: min(40vw, 35rem);
+  right: max(-14vw, -10rem);
+  top: -4rem;
+  border-color: rgba(45, 226, 230, 0.86);
+  animation-duration: 15s;
 }
 
 .polar-scribble {
   position: absolute;
-  right: max(-16vw, -12rem);
-  top: 9rem;
-  width: min(72vw, 64rem);
+  right: max(-18vw, -12rem);
+  top: 10rem;
+  width: min(68vw, 58rem);
   height: auto;
   z-index: -1;
-  opacity: 0.75;
+  opacity: 0.72;
   pointer-events: none;
 }
 
 .polar-scribble path {
   fill: none;
   stroke: var(--polar-aqua);
-  stroke-width: 20;
+  stroke-width: 16;
   stroke-linecap: round;
   stroke-linejoin: round;
-  animation: polar-scribble-breathe 8s ease-in-out infinite;
+  animation: polar-scribble-breathe 7.5s ease-in-out infinite;
 }
 
 .polar-header {
@@ -969,12 +970,29 @@ h4 { font-size: 1rem; }
   gap: 1rem;
 }
 
+.polar-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
 .polar-logo {
   margin: 0;
   font-size: clamp(1.4rem, 2.4vw, 2rem);
   letter-spacing: 0.04em;
   font-weight: 800;
   text-transform: uppercase;
+  color: #f4f7ff;
+}
+
+.polar-tag {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(155, 164, 189, 0.78);
+  font-weight: 600;
 }
 
 .polar-nav {
@@ -984,75 +1002,82 @@ h4 { font-size: 1rem; }
 }
 
 .polar-chip {
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.6);
-  color: rgba(10, 13, 21, 0.9);
-  height: 3rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(237, 242, 255, 0.9);
+  height: 2.8rem;
   padding: 0 1.2rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.84rem;
-  letter-spacing: 0.03em;
+  font-size: 0.77rem;
+  letter-spacing: 0.06em;
   font-weight: 700;
   text-transform: uppercase;
-  transition: transform 150ms ease, background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+  transition: transform 150ms ease, background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .polar-chip:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.82);
-}
-
-.polar-chip-round {
-  width: 3rem;
-  padding: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
 }
 
 .polar-chip-dark {
-  color: #f4f6fd;
-  background: #252c40;
-  box-shadow: 0 8px 24px rgba(17, 20, 30, 0.24);
+  color: #05070c;
+  background: linear-gradient(100deg, var(--polar-aqua), #9cf7ff);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .polar-chip-dark:hover {
-  background: #20283e;
+  background: linear-gradient(100deg, #52edf0, #c0fbff);
 }
 
 .polar-chip-light {
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(79, 103, 255, 0.2);
+  border-color: rgba(79, 103, 255, 0.46);
+  color: #ced6ff;
+}
+
+.polar-chip-outline {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.polar-chip-outline:hover {
+  border-color: rgba(255, 255, 255, 0.44);
 }
 
 .polar-hero {
-  padding-top: clamp(2.5rem, 5.6vw, 5.5rem);
+  padding-top: clamp(2.2rem, 5.3vw, 5.2rem);
 }
 
 .polar-title {
   margin: 0;
   display: grid;
   gap: 0.1em;
-  letter-spacing: -0.048em;
-  line-height: 0.9;
-  font-size: clamp(3.1rem, 9.4vw, 9.8rem);
+  letter-spacing: -0.052em;
+  line-height: 0.88;
+  font-size: clamp(3.3rem, 9.6vw, 10rem);
   text-wrap: balance;
+  color: transparent;
+  background: linear-gradient(150deg, #f4f8ff 8%, #cad3f7 62%, rgba(45, 226, 230, 0.92) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .polar-intro {
   margin-top: clamp(2rem, 5vw, 5rem);
   margin-left: auto;
-  max-width: min(47rem, 100%);
+  max-width: min(51rem, 100%);
   display: grid;
-  gap: 1.6rem;
+  gap: 1.35rem;
 }
 
 .polar-intro p {
   margin: 0;
-  font-size: clamp(1.2rem, 2.1vw, 2.05rem);
-  line-height: 1.37;
-  color: rgba(8, 10, 18, 0.9);
+  font-size: clamp(1.12rem, 1.94vw, 1.8rem);
+  line-height: 1.4;
+  color: rgba(221, 228, 245, 0.9);
   text-wrap: pretty;
 }
 
@@ -1068,55 +1093,86 @@ h4 { font-size: 1rem; }
   align-items: center;
   gap: 0.6rem;
   border-radius: 9999px;
-  padding: 0.85rem 1.35rem;
-  color: #11141f;
+  padding: 0.82rem 1.35rem;
+  color: #f2f7ff;
   background: var(--polar-shell);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  font-size: 0.93rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.88rem;
   font-weight: 700;
-  letter-spacing: 0.01em;
-  transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+  letter-spacing: 0.05em;
+  transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
 }
 
 .polar-approach:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 12px 30px rgba(22, 26, 37, 0.12);
+  background: rgba(26, 36, 58, 0.9);
+  border-color: rgba(45, 226, 230, 0.52);
 }
 
 .polar-dot {
   width: 8px;
   height: 8px;
   border-radius: 9999px;
-  background: #0a0c13;
+  background: var(--polar-aqua);
+  box-shadow: 0 0 0 6px rgba(45, 226, 230, 0.14);
 }
 
 .polar-secondary-link {
-  color: rgba(14, 16, 25, 0.75);
+  color: rgba(155, 164, 189, 0.9);
   font-weight: 600;
   font-size: 0.95rem;
-  border-bottom: 1px solid rgba(14, 16, 25, 0.35);
+  border-bottom: 1px solid rgba(155, 164, 189, 0.35);
   transition: color 150ms ease, border-color 150ms ease;
 }
 
 .polar-secondary-link:hover {
-  color: rgba(14, 16, 25, 1);
-  border-color: rgba(14, 16, 25, 0.85);
+  color: rgba(236, 242, 255, 1);
+  border-color: rgba(236, 242, 255, 0.72);
+}
+
+.polar-metrics {
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.polar-metric {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.95rem;
+  padding: 0.85rem 0.95rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.polar-metric-value {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.1vw, 2rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #f6f8ff;
+}
+
+.polar-metric-label {
+  margin: 0.45rem 0 0;
+  font-size: 0.77rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(155, 164, 189, 0.94);
 }
 
 .polar-lab {
-  margin-top: clamp(2.4rem, 7vw, 7rem);
+  margin-top: clamp(2.3rem, 6.5vw, 6.8rem);
   display: grid;
-  grid-template-columns: minmax(16rem, 1.1fr) minmax(18rem, 1fr);
+  grid-template-columns: minmax(16rem, 1.02fr) minmax(18rem, 1fr);
   gap: clamp(1rem, 3vw, 2.5rem);
   align-items: stretch;
 }
 
 .polar-lab-art {
   min-height: clamp(15rem, 32vw, 23rem);
-  border-radius: 1.25rem;
-  background: linear-gradient(145deg, rgba(146, 147, 255, 0.24), rgba(236, 241, 255, 0.55));
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 1.1rem;
+  background: linear-gradient(145deg, rgba(14, 20, 36, 0.96), rgba(9, 13, 24, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
 }
@@ -1125,40 +1181,41 @@ h4 { font-size: 1rem; }
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(12, 15, 24, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(12, 15, 24, 0.1) 1px, transparent 1px);
-  background-size: 32px 32px;
-  opacity: 0.22;
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.48;
 }
 
 .polar-orbit {
   position: absolute;
-  width: min(30vw, 16rem);
-  height: min(30vw, 16rem);
+  width: min(31vw, 17rem);
+  height: min(31vw, 17rem);
   border-radius: 50%;
-  border: 10px solid rgba(83, 92, 255, 0.58);
-  left: -12%;
-  bottom: -26%;
+  border: 9px solid rgba(79, 103, 255, 0.74);
+  left: -11%;
+  bottom: -28%;
 }
 
 .polar-track,
 .polar-track-alt {
   position: absolute;
   height: 8px;
-  width: 74%;
+  width: 76%;
   border-radius: 9999px;
-  background: linear-gradient(90deg, rgba(87, 221, 225, 0.74), rgba(47, 62, 255, 0.44));
+  background: linear-gradient(90deg, rgba(45, 226, 230, 0.84), rgba(79, 103, 255, 0.78));
   transform: rotate(15deg);
   right: -12%;
-  top: 38%;
-  animation: polar-drift 10s ease-in-out infinite alternate;
+  top: 35%;
+  animation: polar-track-wave 10s ease-in-out infinite alternate;
 }
 
 .polar-track-alt {
-  width: 56%;
+  width: 54%;
   height: 6px;
-  top: 58%;
-  right: 6%;
+  top: 57%;
+  right: 8%;
+  background: linear-gradient(90deg, rgba(255, 109, 69, 0.82), rgba(45, 226, 230, 0.72));
   animation-duration: 13s;
 }
 
@@ -1168,17 +1225,17 @@ h4 { font-size: 1rem; }
 }
 
 .polar-cap-card {
-  border-radius: 1.1rem;
-  border: 1px solid rgba(255, 255, 255, 0.62);
-  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
   padding: clamp(1rem, 2vw, 1.45rem);
-  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
 }
 
 .polar-cap-card:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 16px 34px rgba(20, 24, 34, 0.11);
+  border-color: rgba(45, 226, 230, 0.54);
+  box-shadow: 0 16px 36px rgba(3, 7, 14, 0.5);
 }
 
 .polar-cap-card h2 {
@@ -1186,13 +1243,13 @@ h4 { font-size: 1rem; }
   font-size: clamp(1.15rem, 1.55vw, 1.42rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
-  color: var(--polar-muted);
+  color: #f2f6ff;
 }
 
 .polar-cap-card p {
   margin: 0.75rem 0 0;
-  color: rgba(27, 31, 42, 0.86);
-  font-size: 0.96rem;
+  color: rgba(188, 198, 221, 0.94);
+  font-size: 0.95rem;
   line-height: 1.45;
 }
 
@@ -1218,12 +1275,17 @@ h4 { font-size: 1rem; }
 
 @keyframes polar-drift {
   from { transform: translateY(0) scale(1); }
-  to { transform: translateY(-10px) scale(1.02); }
+  to { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes polar-track-wave {
+  from { transform: rotate(15deg) translateY(0); }
+  to { transform: rotate(12deg) translateY(-5px); }
 }
 
 @keyframes polar-scribble-breathe {
   0%,
-  100% { opacity: 0.72; }
+  100% { opacity: 0.66; }
   50% { opacity: 0.92; }
 }
 
@@ -1239,6 +1301,10 @@ h4 { font-size: 1rem; }
   .polar-lab-art {
     min-height: 14rem;
   }
+
+  .polar-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -1251,6 +1317,12 @@ h4 { font-size: 1rem; }
     align-items: flex-start;
   }
 
+  .polar-brand {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+
   .polar-nav {
     width: 100%;
     justify-content: flex-start;
@@ -1258,11 +1330,11 @@ h4 { font-size: 1rem; }
   }
 
   .polar-chip {
-    height: 2.65rem;
+    height: 2.55rem;
   }
 
   .polar-title {
-    font-size: clamp(2.5rem, 15vw, 4.5rem);
+    font-size: clamp(2.65rem, 15vw, 4.6rem);
     line-height: 0.93;
   }
 
@@ -1274,17 +1346,21 @@ h4 { font-size: 1rem; }
     font-size: clamp(1.04rem, 4.6vw, 1.42rem);
   }
 
+  .polar-metrics {
+    grid-template-columns: 1fr;
+  }
+
   .polar-ring-left {
-    width: 84vw;
-    height: 84vw;
-    left: -46vw;
-    top: 10.5rem;
+    width: 86vw;
+    height: 86vw;
+    left: -49vw;
+    top: 11rem;
   }
 
   .polar-ring-right {
-    width: 72vw;
-    height: 72vw;
-    right: -43vw;
+    width: 73vw;
+    height: 73vw;
+    right: -44vw;
     top: -3rem;
   }
 }
