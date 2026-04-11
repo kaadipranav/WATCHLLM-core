@@ -22,6 +22,29 @@ const CAPABILITIES = [
   },
 ];
 
+const TRUST_MARKS = ['NOVA BANK', 'ORBIT OPS', 'ARC BIO', 'METRIC LAYER', 'STRATA LEGAL'];
+
+const LOOP_STEPS = [
+  {
+    phase: 'Inject',
+    title: 'Launch adversarial runs',
+    detail:
+      'Target specific failure classes with curated payload sets for prompt injection, hallucination, and tool abuse.',
+  },
+  {
+    phase: 'Inspect',
+    title: 'Replay the failure graph',
+    detail:
+      'Inspect every node transition and isolate exactly where routing, context, or policy handling drifted.',
+  },
+  {
+    phase: 'Iterate',
+    title: 'Fork and verify fixes',
+    detail:
+      'Branch from the failure node, ship the fix, and re-run the same attack path with confidence in minutes.',
+  },
+];
+
 export default function HomePage(): JSX.Element {
   return (
     <main className={`polar-page ${manrope.className}`}>
@@ -89,7 +112,41 @@ export default function HomePage(): JSX.Element {
         </div>
       </section>
 
-      <section className="polar-lab reveal reveal-4">
+      <section className="polar-proof reveal reveal-4" aria-label="Social proof">
+        <p className="polar-proof-label">Teams shipping high-stakes agents trust this workflow</p>
+        <div className="polar-proof-track">
+          {TRUST_MARKS.map((mark) => (
+            <span key={mark} className={`${syne.className} polar-mark`}>
+              {mark}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <section className="polar-theater reveal reveal-5">
+        <article className="polar-theater-card" aria-label="Sample simulation run">
+          <p className={`${syne.className} polar-theater-title`}>Simulation run: pro-funnel-agent-v4</p>
+          <div className="polar-log-lines">
+            <p><span>$</span> watchllm simulate --categories prompt_injection,tool_abuse</p>
+            <p><span>→</span> Injecting adversarial payload set #07</p>
+            <p><span>→</span> Tool-call chain drift detected at node 14</p>
+            <p><span>→</span> Severity scored at 0.82 (critical)</p>
+            <p><span>✓</span> Graph stored and replay checkpoint created</p>
+          </div>
+        </article>
+
+        <div className="polar-loop-grid" aria-label="Operating loop">
+          {LOOP_STEPS.map((step) => (
+            <article key={step.phase} className="polar-loop-step">
+              <p className={`${syne.className} polar-loop-phase`}>{step.phase}</p>
+              <h3 className={syne.className}>{step.title}</h3>
+              <p>{step.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="polar-lab reveal reveal-6">
         <article className="polar-lab-art" aria-hidden="true">
           <div className="polar-grid-fade" />
           <div className="polar-orbit" />
@@ -104,6 +161,21 @@ export default function HomePage(): JSX.Element {
               <p>{capability.description}</p>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="polar-closer reveal reveal-7">
+        <div>
+          <p className="polar-closer-kicker">Reliability is a product feature.</p>
+          <h2 className={`${syne.className} polar-closer-title`}>Ship agents your users can trust under pressure.</h2>
+        </div>
+        <div className="polar-closer-actions">
+          <Link className="polar-chip polar-chip-dark" href="/dashboard/settings/billing">
+            Start stress testing
+          </Link>
+          <a className="polar-chip polar-chip-outline" href="mailto:team@watchllm.dev">
+            Talk to our team
+          </a>
         </div>
       </section>
     </main>

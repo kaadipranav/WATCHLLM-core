@@ -1160,6 +1160,121 @@ h4 { font-size: 1rem; }
   color: rgba(155, 164, 189, 0.94);
 }
 
+.polar-proof {
+  margin-top: clamp(1.6rem, 4.6vw, 4.1rem);
+  display: grid;
+  gap: 0.95rem;
+}
+
+.polar-proof-label {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: rgba(155, 164, 189, 0.82);
+}
+
+.polar-proof-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.polar-mark {
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(221, 229, 245, 0.94);
+  padding: 0.5rem 0.84rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.polar-theater {
+  margin-top: clamp(2.2rem, 5.8vw, 5.4rem);
+  display: grid;
+  grid-template-columns: minmax(17rem, 1.08fr) minmax(19rem, 1fr);
+  gap: clamp(1rem, 2.7vw, 2rem);
+}
+
+.polar-theater-card {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: linear-gradient(175deg, rgba(12, 18, 31, 0.95), rgba(8, 12, 23, 0.95));
+  padding: 1rem 1.1rem 1.15rem;
+  box-shadow: 0 24px 48px rgba(2, 5, 11, 0.5);
+}
+
+.polar-theater-title {
+  margin: 0;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(232, 240, 255, 0.94);
+}
+
+.polar-log-lines {
+  margin-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 0.72rem;
+}
+
+.polar-log-lines p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: rgba(181, 195, 223, 0.92);
+}
+
+.polar-log-lines p span {
+  color: var(--polar-aqua);
+  display: inline-block;
+  width: 1.1rem;
+}
+
+.polar-loop-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.polar-loop-step {
+  border-radius: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.9rem 1rem 1rem;
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.polar-loop-step:hover {
+  transform: translateY(-2px);
+  border-color: rgba(79, 103, 255, 0.55);
+  box-shadow: 0 16px 30px rgba(4, 9, 18, 0.45);
+}
+
+.polar-loop-phase {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(45, 226, 230, 0.88);
+}
+
+.polar-loop-step h3 {
+  margin: 0.38rem 0 0;
+  font-size: 1.08rem;
+  letter-spacing: -0.02em;
+  color: rgba(242, 247, 255, 0.96);
+}
+
+.polar-loop-step p {
+  margin: 0.55rem 0 0;
+  color: rgba(187, 197, 220, 0.92);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 .polar-lab {
   margin-top: clamp(2.3rem, 6.5vw, 6.8rem);
   display: grid;
@@ -1253,6 +1368,43 @@ h4 { font-size: 1rem; }
   line-height: 1.45;
 }
 
+.polar-closer {
+  margin-top: clamp(2.5rem, 7vw, 7rem);
+  border-radius: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background:
+    linear-gradient(135deg, rgba(79, 103, 255, 0.16), rgba(45, 226, 230, 0.08) 46%, rgba(255, 109, 69, 0.08)),
+    rgba(10, 15, 25, 0.88);
+  padding: clamp(1.2rem, 2.8vw, 2.1rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.polar-closer-kicker {
+  margin: 0;
+  color: rgba(155, 164, 189, 0.9);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.polar-closer-title {
+  margin: 0.55rem 0 0;
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  max-width: 18ch;
+}
+
+.polar-closer-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
 .reveal {
   animation: polar-reveal 680ms ease both;
 }
@@ -1261,6 +1413,9 @@ h4 { font-size: 1rem; }
 .reveal-2 { animation-delay: 110ms; }
 .reveal-3 { animation-delay: 180ms; }
 .reveal-4 { animation-delay: 250ms; }
+.reveal-5 { animation-delay: 320ms; }
+.reveal-6 { animation-delay: 390ms; }
+.reveal-7 { animation-delay: 460ms; }
 
 @keyframes polar-reveal {
   from {
@@ -1295,6 +1450,10 @@ h4 { font-size: 1rem; }
   }
 
   .polar-lab {
+    grid-template-columns: 1fr;
+  }
+
+  .polar-theater {
     grid-template-columns: 1fr;
   }
 
@@ -1348,6 +1507,10 @@ h4 { font-size: 1rem; }
 
   .polar-metrics {
     grid-template-columns: 1fr;
+  }
+
+  .polar-closer {
+    align-items: flex-start;
   }
 
   .polar-ring-left {
