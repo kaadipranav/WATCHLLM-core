@@ -873,3 +873,418 @@ h4 { font-size: 1rem; }
 .mt-6 { margin-top: var(--sp-6); }
 .mb-6 { margin-bottom: var(--sp-6); }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── Polarized Landing Page ── */
+.polar-page {
+  --polar-bg: #d7dae3;
+  --polar-ink: #05060b;
+  --polar-muted: #1b1f2a;
+  --polar-blue: #2f3eff;
+  --polar-aqua: #58dde1;
+  --polar-shell: rgba(255, 255, 255, 0.42);
+
+  position: relative;
+  min-height: 100dvh;
+  overflow: clip;
+  isolation: isolate;
+  padding: clamp(1.2rem, 2.7vw, 2.5rem) clamp(1rem, 4.2vw, 3.9rem) clamp(3rem, 8vw, 6.5rem);
+  background: var(--polar-bg);
+  color: var(--polar-ink);
+}
+
+.polar-page::before {
+  content: '';
+  position: absolute;
+  inset: -15% -10%;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.65), transparent 48%),
+    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.3), transparent 45%),
+    linear-gradient(125deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0));
+  z-index: -3;
+}
+
+.polar-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(60rem 32rem at 28% 24%, rgba(255, 255, 255, 0.24), transparent 62%),
+    radial-gradient(44rem 30rem at 73% 40%, rgba(84, 223, 229, 0.12), transparent 65%);
+}
+
+.polar-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  border: clamp(12px, 1.4vw, 22px) solid;
+  opacity: 0.9;
+  filter: blur(0.2px);
+  animation: polar-drift 11s ease-in-out infinite alternate;
+}
+
+.polar-ring-left {
+  width: min(58vw, 58rem);
+  height: min(58vw, 58rem);
+  left: max(-27vw, -22rem);
+  top: 7rem;
+  border-color: var(--polar-blue);
+}
+
+.polar-ring-right {
+  width: min(44vw, 40rem);
+  height: min(44vw, 40rem);
+  right: max(-16vw, -13rem);
+  top: -5rem;
+  border-color: var(--polar-aqua);
+  animation-duration: 14s;
+}
+
+.polar-scribble {
+  position: absolute;
+  right: max(-16vw, -12rem);
+  top: 9rem;
+  width: min(72vw, 64rem);
+  height: auto;
+  z-index: -1;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.polar-scribble path {
+  fill: none;
+  stroke: var(--polar-aqua);
+  stroke-width: 20;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: polar-scribble-breathe 8s ease-in-out infinite;
+}
+
+.polar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.polar-logo {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  letter-spacing: 0.04em;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.polar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.polar-chip {
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.6);
+  color: rgba(10, 13, 21, 0.9);
+  height: 3rem;
+  padding: 0 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.84rem;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: transform 150ms ease, background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.polar-chip:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.polar-chip-round {
+  width: 3rem;
+  padding: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.polar-chip-dark {
+  color: #f4f6fd;
+  background: #252c40;
+  box-shadow: 0 8px 24px rgba(17, 20, 30, 0.24);
+}
+
+.polar-chip-dark:hover {
+  background: #20283e;
+}
+
+.polar-chip-light {
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.polar-hero {
+  padding-top: clamp(2.5rem, 5.6vw, 5.5rem);
+}
+
+.polar-title {
+  margin: 0;
+  display: grid;
+  gap: 0.1em;
+  letter-spacing: -0.048em;
+  line-height: 0.9;
+  font-size: clamp(3.1rem, 9.4vw, 9.8rem);
+  text-wrap: balance;
+}
+
+.polar-intro {
+  margin-top: clamp(2rem, 5vw, 5rem);
+  margin-left: auto;
+  max-width: min(47rem, 100%);
+  display: grid;
+  gap: 1.6rem;
+}
+
+.polar-intro p {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.1vw, 2.05rem);
+  line-height: 1.37;
+  color: rgba(8, 10, 18, 0.9);
+  text-wrap: pretty;
+}
+
+.polar-intro-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.polar-approach {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 9999px;
+  padding: 0.85rem 1.35rem;
+  color: #11141f;
+  background: var(--polar-shell);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  font-size: 0.93rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.polar-approach:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 12px 30px rgba(22, 26, 37, 0.12);
+}
+
+.polar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #0a0c13;
+}
+
+.polar-secondary-link {
+  color: rgba(14, 16, 25, 0.75);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(14, 16, 25, 0.35);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.polar-secondary-link:hover {
+  color: rgba(14, 16, 25, 1);
+  border-color: rgba(14, 16, 25, 0.85);
+}
+
+.polar-lab {
+  margin-top: clamp(2.4rem, 7vw, 7rem);
+  display: grid;
+  grid-template-columns: minmax(16rem, 1.1fr) minmax(18rem, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: stretch;
+}
+
+.polar-lab-art {
+  min-height: clamp(15rem, 32vw, 23rem);
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, rgba(146, 147, 255, 0.24), rgba(236, 241, 255, 0.55));
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+
+.polar-grid-fade {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(12, 15, 24, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(12, 15, 24, 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.22;
+}
+
+.polar-orbit {
+  position: absolute;
+  width: min(30vw, 16rem);
+  height: min(30vw, 16rem);
+  border-radius: 50%;
+  border: 10px solid rgba(83, 92, 255, 0.58);
+  left: -12%;
+  bottom: -26%;
+}
+
+.polar-track,
+.polar-track-alt {
+  position: absolute;
+  height: 8px;
+  width: 74%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(87, 221, 225, 0.74), rgba(47, 62, 255, 0.44));
+  transform: rotate(15deg);
+  right: -12%;
+  top: 38%;
+  animation: polar-drift 10s ease-in-out infinite alternate;
+}
+
+.polar-track-alt {
+  width: 56%;
+  height: 6px;
+  top: 58%;
+  right: 6%;
+  animation-duration: 13s;
+}
+
+.polar-cap-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.polar-cap-card {
+  border-radius: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.5);
+  padding: clamp(1rem, 2vw, 1.45rem);
+  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+
+.polar-cap-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 16px 34px rgba(20, 24, 34, 0.11);
+}
+
+.polar-cap-card h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 1.55vw, 1.42rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--polar-muted);
+}
+
+.polar-cap-card p {
+  margin: 0.75rem 0 0;
+  color: rgba(27, 31, 42, 0.86);
+  font-size: 0.96rem;
+  line-height: 1.45;
+}
+
+.reveal {
+  animation: polar-reveal 680ms ease both;
+}
+
+.reveal-1 { animation-delay: 40ms; }
+.reveal-2 { animation-delay: 110ms; }
+.reveal-3 { animation-delay: 180ms; }
+.reveal-4 { animation-delay: 250ms; }
+
+@keyframes polar-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes polar-drift {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-10px) scale(1.02); }
+}
+
+@keyframes polar-scribble-breathe {
+  0%,
+  100% { opacity: 0.72; }
+  50% { opacity: 0.92; }
+}
+
+@media (max-width: 1100px) {
+  .polar-title {
+    max-width: 12ch;
+  }
+
+  .polar-lab {
+    grid-template-columns: 1fr;
+  }
+
+  .polar-lab-art {
+    min-height: 14rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .polar-page {
+    padding-top: 1rem;
+  }
+
+  .polar-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .polar-nav {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .polar-chip {
+    height: 2.65rem;
+  }
+
+  .polar-title {
+    font-size: clamp(2.5rem, 15vw, 4.5rem);
+    line-height: 0.93;
+  }
+
+  .polar-intro {
+    margin-left: 0;
+  }
+
+  .polar-intro p {
+    font-size: clamp(1.04rem, 4.6vw, 1.42rem);
+  }
+
+  .polar-ring-left {
+    width: 84vw;
+    height: 84vw;
+    left: -46vw;
+    top: 10.5rem;
+  }
+
+  .polar-ring-right {
+    width: 72vw;
+    height: 72vw;
+    right: -43vw;
+    top: -3rem;
+  }
+}
