@@ -177,18 +177,33 @@ export const apiKeys = {
 // ---------- Billing ----------
 
 export type CheckoutResponse = {
-  provider: 'stripe' | 'razorpay';
+  provider: 'stripe' | 'dodo';
   checkout_url?: string;
-  razorpay_order_id?: string;
-  razorpay_key_id?: string;
+  dodo_checkout_id?: string;
+  credit_purchase_url?: string;
+  credits_granted?: number;
   amount?: number;
   currency?: string;
 };
 
 export type SubscriptionStatus = {
-  active: boolean;
+  provider: 'stripe' | 'dodo';
   tier: string;
+  status: 'active' | 'cancelled' | 'past_due' | 'free';
   current_period_end?: number;
+  credits_balance?: number;
+};
+
+export type CreditsStatus = {
+  tier: string;
+  credits_balance: number;
+  credited_this_month: number;
+  debited_this_month: number;
+};
+
+export type UsageStatus = {
+  simulation_runs: number;
+  replay_storage_bytes: number;
 };
 
 export const billing = {
@@ -200,5 +215,11 @@ export const billing = {
   },
   subscription(): Promise<ApiResponse<SubscriptionStatus>> {
     return request<SubscriptionStatus>('/api/v1/billing/subscription');
+  },
+  credits(): Promise<ApiResponse<CreditsStatus>> {
+    return request<CreditsStatus>('/api/v1/billing/credits');
+  },
+  usage(): Promise<ApiResponse<UsageStatus>> {
+    return request<UsageStatus>('/api/v1/billing/usage');
   },
 };

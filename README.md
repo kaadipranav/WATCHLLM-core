@@ -1,7 +1,7 @@
 # WatchLLM
 
-WatchLLM is an agent reliability platform for AI engineering teams.
-It stress tests agents with adversarial scenarios, captures execution as a trace graph, and enables replay and fork-based debugging from failure points.
+WatchLLM is an Agent Stress Testing + Agentic Git + Replay Platform for AI engineering teams.
+It stress-tests agents with adversarial scenarios, versions every execution turn like commits, and enables deep replay and fork-based debugging from failure points.
 
 ## Why WatchLLM
 
@@ -16,12 +16,12 @@ Traditional observability tells you what happened. WatchLLM tells you how your a
 
 | Surface | Runtime | Responsibility |
 | --- | --- | --- |
-| Web | Next.js App Router | Product UI for projects, agents, simulations, billing |
+| Web | Next.js App Router | Product UI for projects, agents, simulations, billing, deep replay |
 | API Worker | Cloudflare Workers + Hono | Auth, CRUD, simulation orchestration kickoff, billing APIs |
-| Orchestrator Worker | Cloudflare Queue Consumer | Fans out simulation categories into chaos runs |
-| Chaos Worker | Cloudflare Workers | Executes attack runs, scores severity, writes trace graphs |
+| Orchestrator Worker | Cloudflare Queue Consumer | Coordinates planner, executor, and validator swarm roles |
+| Chaos Worker | Cloudflare Workers | Executes role tasks, scores severity, verifies outcomes, writes trace layers |
 | D1 | SQLite on Cloudflare | System of record for users, projects, agents, simulations |
-| R2 | Object Storage | Gzipped trace graphs and simulation summaries |
+| R2 | Object Storage | Heavy session blobs, raw traces, and deep replay artifacts |
 | KV | Cloudflare KV | Tier-aware rate limiting and short-lived counters |
 | AI Binding | Cloudflare AI | LLM judge for compromise assessment |
 
@@ -49,7 +49,7 @@ flowchart LR
     CHAOS --> AI[Cloudflare AI Judge]
     CHAOS --> AGENT[Target Agent Endpoint]
 
-    API --> PAY[Stripe / Razorpay]
+    API --> PAY[Stripe / Dodo Payments]
     PAY --> API
 ```
 
@@ -105,8 +105,9 @@ erDiagram
       integer created_at
       text stripe_customer_id
       text payment_provider
-      text razorpay_customer_id
+      text dodo_customer_id
       text payment_subscription_id
+      integer credits_balance
     }
     projects {
       text id PK
@@ -229,7 +230,9 @@ All API responses follow this shape:
 | POST/GET/DELETE | /api/v1/keys | API key lifecycle | Session |
 | POST | /api/v1/billing/checkout | Start plan checkout | Session |
 | GET | /api/v1/billing/subscription | Get subscription status | Session |
-| POST | /api/v1/webhooks/payment | Stripe/Razorpay webhook ingestion | Signed webhook |
+| GET | /api/v1/billing/credits | Get credit balance and monthly deltas | Session |
+| GET | /api/v1/billing/usage | Get current monthly metered usage | Session |
+| POST | /api/v1/webhooks/payment | Stripe/Dodo webhook ingestion | Signed webhook |
 
 ## Monorepo Layout
 
@@ -276,15 +279,13 @@ npm run dev --workspace=apps/workers/orchestrator
 npm run dev --workspace=apps/workers/chaos
 ```
 
-Note: The web app currently contains source scaffolding but no package manifest in this repo state.
-
 ## Environment And Bindings
 
 ### API worker
 
 - Bindings: DB, TRACES, KV, SIMULATION_QUEUE
 - Auth: BETTER_AUTH_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
-- Payment: PAYMENT_PROVIDER, STRIPE_*, RAZORPAY_*
+- Payment: PAYMENT_PROVIDER, STRIPE_*, DODO_*
 - Observability: SENTRY_DSN
 - Vars: ENVIRONMENT
 
@@ -357,7 +358,7 @@ Cloudflare Pages (recommended):
 4. Build output directory: `out`.
 5. Configure production environment variables in Pages settings:
   - `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
-  - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `razorpay`)
+  - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `dodo`)
 
 Optional CLI deployment flow:
 
@@ -366,7 +367,7 @@ Optional CLI deployment flow:
   - `$env:CLOUDFLARE_ACCOUNT_ID="..."`
 2. Set build-time public env vars:
   - `$env:NEXT_PUBLIC_API_URL="https://watchllm-api.watchllm.workers.dev"`
-  - `$env:NEXT_PUBLIC_PAYMENT_PROVIDER="razorpay"`
+  - `$env:NEXT_PUBLIC_PAYMENT_PROVIDER="dodo"`
 3. Build the Pages output:
   - `npm run pages:build --workspace=@watchllm/web`
 4. Deploy to Pages:

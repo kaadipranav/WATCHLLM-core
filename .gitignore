@@ -6,9 +6,8 @@ __pycache__/
 *.pyo
 
 # Environment — secrets managed via Doppler, never committed
-.env
-.env.*
-!.env.example
+.env*
+*.env*
 
 # Build outputs
 dist/
@@ -30,4 +29,4 @@ apps/web/out/
 
 # Misc
 *.log
-.mypy_cache/
+.mypy_cache/

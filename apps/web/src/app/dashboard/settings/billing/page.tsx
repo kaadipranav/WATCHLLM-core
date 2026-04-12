@@ -6,11 +6,11 @@ import { billing, type SubscriptionStatus } from '../../../../lib/api';
 import { useAuth } from '../../../../lib/auth-context';
 import { TIER_LIMITS } from '@watchllm/types';
 
-const PAYMENT_PROVIDER = (process.env.NEXT_PUBLIC_PAYMENT_PROVIDER ?? 'stripe') as 'stripe' | 'razorpay';
+const PAYMENT_PROVIDER = (process.env.NEXT_PUBLIC_PAYMENT_PROVIDER ?? 'dodo') as 'stripe' | 'dodo';
 
 const PRICING = {
-  stripe:   { pro: '$29/mo', team: '$99/mo', currency: 'USD' },
-  razorpay: { pro: '₹2,499/mo', team: '₹8,499/mo', currency: 'INR' },
+  stripe: { pro: '$29/mo', team: '$99/mo', currency: 'USD' },
+  dodo: { pro: '$39/mo + usage credits', team: '$129/mo + usage credits', currency: 'Global (MoR)' },
 };
 
 const TIER_COLORS: Record<string, string> = {
@@ -113,8 +113,11 @@ export default function BillingPage(): JSX.Element {
                 <span style={{ fontSize: '1.5rem', fontWeight: 700, textTransform: 'capitalize', color: TIER_COLORS[currentTier] }}>
                   {currentTier}
                 </span>
-                {subscription?.active && (
+                {subscription?.status === 'active' && (
                   <span className="badge badge-success">Active</span>
+                )}
+                {(subscription?.credits_balance ?? 0) > 0 && (
+                  <span className="badge badge-info">{subscription?.credits_balance} credits</span>
                 )}
               </div>
             )}
@@ -222,9 +225,9 @@ export default function BillingPage(): JSX.Element {
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             Payments processed securely via{' '}
             <strong style={{ color: 'var(--text-primary)' }}>
-              {PAYMENT_PROVIDER === 'razorpay' ? 'Razorpay' : 'Stripe'}
+              {PAYMENT_PROVIDER === 'dodo' ? 'Dodo Payments' : 'Stripe'}
             </strong>
-            {' '}· Currency: <strong>{pricing.currency}</strong>
+            {' '}· Currency: <strong>{pricing.currency}</strong> · MoR: <strong>{PAYMENT_PROVIDER === 'dodo' ? 'enabled' : 'disabled'}</strong>
           </p>
         </div>
       </div>

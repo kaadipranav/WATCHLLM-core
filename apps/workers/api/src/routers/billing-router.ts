@@ -13,9 +13,24 @@ const checkoutSchema = z.object({
 interface BillingUserRow {
   email: string;
   stripe_customer_id: string | null;
-  razorpay_customer_id: string | null;
+  dodo_customer_id: string | null;
   payment_subscription_id: string | null;
   tier: string;
+  credits_balance: number | null;
+}
+
+interface CreditsAggregateRow {
+  credited: number | string | null;
+  debited: number | string | null;
+}
+
+interface UsageAggregateRow {
+  category: string;
+  total: number | string;
+}
+
+function monthStartUnix(now: Date): number {
+  return Math.floor(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1) / 1000);
 }
 
 export const billingRouter = new Hono<{
@@ -42,7 +57,7 @@ billingRouter.post('/checkout', async (c) => {
   const provider = getPaymentProvider(c.env);
 
   const user = await c.env.DB.prepare(
-    `SELECT email, stripe_customer_id, razorpay_customer_id, payment_subscription_id, tier
+    `SELECT email, stripe_customer_id, dodo_customer_id, payment_subscription_id, tier, credits_balance
      FROM users
      WHERE id = ?
      LIMIT 1`,
@@ -55,7 +70,7 @@ billingRouter.post('/checkout', async (c) => {
   }
 
   const existingCustomerId =
-    c.env.PAYMENT_PROVIDER === 'razorpay' ? user.razorpay_customer_id : user.stripe_customer_id;
+    c.env.PAYMENT_PROVIDER === 'dodo' ? user.dodo_customer_id : user.stripe_customer_id;
 
   const result = await provider.createCheckout({
     userId,
@@ -64,14 +79,19 @@ billingRouter.post('/checkout', async (c) => {
     existingCustomerId,
   });
 
-  if (c.env.PAYMENT_PROVIDER === 'razorpay') {
+  if (c.env.PAYMENT_PROVIDER === 'dodo') {
     await c.env.DB.prepare(
       `UPDATE users
-       SET payment_provider = 'razorpay',
-           payment_subscription_id = COALESCE(?, payment_subscription_id)
+       SET payment_provider = 'dodo',
+           payment_subscription_id = COALESCE(?, payment_subscription_id),
+           dodo_customer_id = COALESCE(?, dodo_customer_id)
        WHERE id = ?`,
     )
-      .bind(result.razorpay_order_id ?? null, userId)
+      .bind(
+        result.dodo_checkout_id ?? null,
+        result.dodo_customer_id ?? existingCustomerId ?? null,
+        userId,
+      )
       .run();
   } else {
     await c.env.DB.prepare(
@@ -96,7 +116,7 @@ billingRouter.get('/subscription', async (c) => {
   const provider = getPaymentProvider(c.env);
 
   const user = await c.env.DB.prepare(
-    `SELECT stripe_customer_id, razorpay_customer_id, payment_subscription_id, tier
+    `SELECT stripe_customer_id, dodo_customer_id, payment_subscription_id, tier, credits_balance
      FROM users
      WHERE id = ?
      LIMIT 1`,
@@ -104,9 +124,10 @@ billingRouter.get('/subscription', async (c) => {
     .bind(userId)
     .first<{
       stripe_customer_id: string | null;
-      razorpay_customer_id: string | null;
+      dodo_customer_id: string | null;
       payment_subscription_id: string | null;
       tier: string;
+      credits_balance: number | null;
     }>();
 
   if (!user) {
@@ -114,14 +135,96 @@ billingRouter.get('/subscription', async (c) => {
   }
 
   const customerId =
-    c.env.PAYMENT_PROVIDER === 'razorpay' ? user.razorpay_customer_id : user.stripe_customer_id;
+    c.env.PAYMENT_PROVIDER === 'dodo' ? user.dodo_customer_id : user.stripe_customer_id;
 
   const status = await provider.getSubscriptionStatus({
     customerId,
     subscriptionId: user.payment_subscription_id,
   });
 
-  return c.json(ok(status), 200);
+  return c.json(
+    ok({
+      ...status,
+      credits_balance: user.credits_balance ?? 0,
+    }),
+    200,
+  );
+});
+
+// GET /api/v1/billing/credits
+billingRouter.get('/credits', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json(err('Unauthorized', 401), 401);
+  }
+
+  const user = await c.env.DB.prepare(
+    `SELECT tier, credits_balance
+     FROM users
+     WHERE id = ?
+     LIMIT 1`,
+  )
+    .bind(userId)
+    .first<{ tier: string; credits_balance: number | null }>();
+
+  if (!user) {
+    return c.json(err('User not found', 404), 404);
+  }
+
+  const monthStart = monthStartUnix(new Date());
+  const aggregate = await c.env.DB.prepare(
+    `SELECT
+       COALESCE(SUM(CASE WHEN delta > 0 THEN delta ELSE 0 END), 0) AS credited,
+       COALESCE(SUM(CASE WHEN delta < 0 THEN -delta ELSE 0 END), 0) AS debited
+     FROM credit_transactions
+     WHERE user_id = ? AND created_at >= ?`,
+  )
+    .bind(userId, monthStart)
+    .first<CreditsAggregateRow>();
+
+  return c.json(
+    ok({
+      tier: user.tier,
+      credits_balance: user.credits_balance ?? 0,
+      credited_this_month: Number(aggregate?.credited ?? 0),
+      debited_this_month: Number(aggregate?.debited ?? 0),
+    }),
+    200,
+  );
+});
+
+// GET /api/v1/billing/usage
+billingRouter.get('/usage', async (c) => {
+  const userId = c.get('userId');
+  if (!userId) {
+    return c.json(err('Unauthorized', 401), 401);
+  }
+
+  const monthStart = monthStartUnix(new Date());
+  const rows = await c.env.DB.prepare(
+    `SELECT category, COALESCE(SUM(value), 0) AS total
+     FROM usage_events
+     WHERE user_id = ? AND period_start >= ?
+     GROUP BY category`,
+  )
+    .bind(userId, monthStart)
+    .all<UsageAggregateRow>();
+
+  const usage = {
+    simulation_runs: 0,
+    replay_storage_bytes: 0,
+  };
+
+  for (const row of rows.results ?? []) {
+    if (row.category === 'simulation_run') {
+      usage.simulation_runs = Number(row.total);
+    }
+    if (row.category === 'replay_storage_bytes') {
+      usage.replay_storage_bytes = Number(row.total);
+    }
+  }
+
+  return c.json(ok(usage), 200);
 });
 
 export default billingRouter;

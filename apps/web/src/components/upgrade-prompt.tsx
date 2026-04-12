@@ -1,4 +1,4 @@
-type PaymentProvider = 'stripe' | 'razorpay';
+type PaymentProvider = 'stripe' | 'dodo';
 
 type TierPricing = {
   pro: string;
@@ -7,12 +7,12 @@ type TierPricing = {
 
 const PRICING: Record<PaymentProvider, TierPricing> = {
   stripe: { pro: '$29/month', team: '$99/month' },
-  razorpay: { pro: '₹2,499/month', team: '₹8,499/month' },
+  dodo: { pro: '$39/month + credits', team: '$129/month + credits' },
 };
 
 function getProvider(): PaymentProvider {
   const provider = process.env.NEXT_PUBLIC_PAYMENT_PROVIDER;
-  return provider === 'razorpay' ? 'razorpay' : 'stripe';
+  return provider === 'dodo' ? 'dodo' : 'stripe';
 }
 
 export default function UpgradePrompt(): JSX.Element {

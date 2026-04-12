@@ -42,9 +42,10 @@ export interface UserRow {
   tier: Tier;
   created_at: number;
   stripe_customer_id: string | null;
-  payment_provider: 'stripe' | 'razorpay';
-  razorpay_customer_id: string | null;
+  payment_provider: 'stripe' | 'dodo';
+  dodo_customer_id: string | null;
   payment_subscription_id: string | null;
+  credits_balance: number;
 }
 
 export interface ProjectRow {

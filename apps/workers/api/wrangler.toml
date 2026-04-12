@@ -22,13 +22,19 @@ queue = "watchllm-simulation-queue"
 
 [vars]
 ENVIRONMENT = "production"
-PAYMENT_PROVIDER = "razorpay"
-RAZORPAY_PLAN_PRO = "plan_SZMoK1x84RRywX"
-RAZORPAY_PLAN_TEAM = "plan_SZMorvLG11FYVO"
+PAYMENT_PROVIDER = "dodo"
+DODO_API_BASE = "https://api.dodopayments.com/v1"
+DODO_PLAN_PRO = "dodo_plan_pro"
+DODO_PLAN_TEAM = "dodo_plan_team"
+DODO_SUCCESS_URL = "https://watchllm.dev/dashboard?upgraded=1"
+DODO_CANCEL_URL = "https://watchllm.dev/dashboard/settings/billing"
 
 [env.dev]
 [env.dev.vars]
 ENVIRONMENT = "development"
-PAYMENT_PROVIDER = "stripe"
-RAZORPAY_PLAN_PRO = "plan_dev_pro"
-RAZORPAY_PLAN_TEAM = "plan_dev_team"
+PAYMENT_PROVIDER = "dodo"
+DODO_API_BASE = "https://api.dodopayments.com/v1"
+DODO_PLAN_PRO = "dodo_plan_dev_pro"
+DODO_PLAN_TEAM = "dodo_plan_dev_team"
+DODO_SUCCESS_URL = "http://localhost:3000/dashboard?upgraded=1"
+DODO_CANCEL_URL = "http://localhost:3000/dashboard/settings/billing"
