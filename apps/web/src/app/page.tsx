@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Manrope, Syne } from 'next/font/google';
+import { DashboardCta } from '../components/dashboard-cta';
 
 const syne = Syne({ subsets: ['latin'], weight: ['500', '700', '800'] });
 const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
@@ -92,9 +93,11 @@ export default function HomePage(): JSX.Element {
         </div>
         <nav className="polar-nav" aria-label="Primary">
           <span className="polar-chip polar-chip-light">LIVE CHAOS RIG</span>
-          <Link className="polar-chip polar-chip-dark" href="/dashboard">
-            OPEN DASHBOARD
-          </Link>
+          <DashboardCta
+            className="polar-chip polar-chip-dark"
+            signedOutLabel="SIGN IN"
+            signedInLabel="OPEN DASHBOARD"
+          />
           <a className="polar-chip polar-chip-outline" href="mailto:team@watchllm.dev">
             TALK TO US
           </a>
