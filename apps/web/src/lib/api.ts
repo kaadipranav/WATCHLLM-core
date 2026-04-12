@@ -35,7 +35,36 @@ async function request<T>(
 export const auth = {
   /** Redirect to GitHub OAuth */
   loginWithGitHub() {
-    window.location.href = `${BASE}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(window.location.origin + '/dashboard')}`;
+    const callbackURL = '/dashboard';
+
+    // Better Auth social sign-in is POST-based in recent versions.
+    void fetch(`${BASE}/api/v1/auth/sign-in/social`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        provider: 'github',
+        callbackURL,
+        disableRedirect: true,
+      }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = (await res.json()) as { url?: string };
+          if (data.url) {
+            window.location.href = data.url;
+            return;
+          }
+        }
+
+        // Compatibility fallback for older server behavior.
+        window.location.href = `${BASE}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
+      })
+      .catch(() => {
+        window.location.href = `${BASE}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
+      });
   },
 
   async getSession(): Promise<{ user: { id: string; email: string; name?: string; image?: string } | null }> {
