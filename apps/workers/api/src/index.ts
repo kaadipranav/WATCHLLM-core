@@ -35,6 +35,19 @@ app.get('/health', (c) => {
   return c.json(ok({ status: 'ok', env: c.env.ENVIRONMENT }), 200);
 });
 
+// Safety redirect for accidental API-domain dashboard navigations.
+app.get('/dashboard/*', (c) => {
+  const source = new URL(c.req.url);
+  const suffix = source.pathname.replace(/^\/dashboard/, '');
+  const target = new URL(`https://watchllm.dev/dashboard${suffix}`);
+  target.search = source.search;
+  return c.redirect(target.toString(), 302);
+});
+
+app.get('/dashboard', (c) => {
+  return c.redirect('https://watchllm.dev/dashboard', 302);
+});
+
 // API v1 routes
 const api = new Hono<{ Bindings: Env }>();
 

@@ -51,7 +51,10 @@ export const auth = {
   /** Redirect to GitHub OAuth */
   loginWithGitHub() {
     const authBase = getAuthBase();
-    const callbackURL = '/dashboard';
+    const callbackURL =
+      typeof window === 'undefined'
+        ? 'https://watchllm.dev/dashboard'
+        : `${window.location.origin}/dashboard`;
 
     // Use top-level redirect to avoid extension/adblock fetch blocking.
     window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;

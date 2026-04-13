@@ -11,20 +11,22 @@ export const authRouter = new Hono<{
 
 authRouter.use('*', rateLimitMiddleware);
 
-function normalizeCallbackURL(raw: string | undefined): string | undefined {
+function normalizeCallbackURL(raw: string | undefined, origin: string): string {
+  const defaultCallback = `${origin}/dashboard`;
+
   if (!raw) {
-    return undefined;
+    return defaultCallback;
   }
 
   if (raw.startsWith('/')) {
-    return raw;
+    return `${origin}${raw}`;
   }
 
   try {
     const parsed = new URL(raw);
-    return `${parsed.pathname}${parsed.search}${parsed.hash}` || '/';
+    return parsed.toString();
   } catch {
-    return '/';
+    return defaultCallback;
   }
 }
 
@@ -44,7 +46,6 @@ function parseOrigin(rawUrl: string | undefined): string | null {
 authRouter.get('/sign-in/social', async (c) => {
   const provider = c.req.query('provider');
   const rawCallbackURL = c.req.query('callbackURL');
-  const callbackURL = normalizeCallbackURL(rawCallbackURL);
   const disableRedirect = c.req.query('disableRedirect') === 'true';
 
   const fallbackOrigin =
@@ -54,6 +55,7 @@ authRouter.get('/sign-in/social', async (c) => {
     parseOrigin(c.req.header('referer')) ??
     parseOrigin(rawCallbackURL) ??
     fallbackOrigin;
+  const callbackURL = normalizeCallbackURL(rawCallbackURL, origin);
   const referer = c.req.header('referer') ?? `${origin}/`;
 
   const body = JSON.stringify({
