@@ -14,6 +14,21 @@ import type {
 } from '@watchllm/types';
 
 const BASE = (process.env.NEXT_PUBLIC_API_URL ?? 'https://api.watchllm.dev').replace(/\/$/, '');
+const CANONICAL_AUTH_BASE = 'https://api.watchllm.dev';
+
+function getAuthBase(): string {
+  if (typeof window === 'undefined') {
+    return BASE;
+  }
+
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return BASE;
+  }
+
+  // Prevent OAuth state mismatches caused by workers.dev/API domain mixing.
+  return CANONICAL_AUTH_BASE;
+}
 
 async function request<T>(
   path: string,
@@ -35,10 +50,11 @@ async function request<T>(
 export const auth = {
   /** Redirect to GitHub OAuth */
   loginWithGitHub() {
+    const authBase = getAuthBase();
     const callbackURL = '/dashboard';
 
     // Better Auth social sign-in is POST-based in recent versions.
-    void fetch(`${BASE}/api/v1/auth/sign-in/social`, {
+    void fetch(`${authBase}/api/v1/auth/sign-in/social`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -60,15 +76,16 @@ export const auth = {
         }
 
         // Compatibility fallback for older server behavior.
-        window.location.href = `${BASE}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
+        window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
       })
       .catch(() => {
-        window.location.href = `${BASE}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
+        window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
       });
   },
 
   async getSession(): Promise<{ user: { id: string; email: string; name?: string; image?: string } | null }> {
-    const res = await fetch(`${BASE}/api/v1/auth/get-session`, {
+    const authBase = getAuthBase();
+    const res = await fetch(`${authBase}/api/v1/auth/get-session`, {
       credentials: 'include',
     });
     if (!res.ok) return { user: null };
@@ -77,7 +94,8 @@ export const auth = {
   },
 
   async signOut(): Promise<void> {
-    await fetch(`${BASE}/api/v1/auth/sign-out`, {
+    const authBase = getAuthBase();
+    await fetch(`${authBase}/api/v1/auth/sign-out`, {
       method: 'POST',
       credentials: 'include',
     });

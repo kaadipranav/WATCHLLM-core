@@ -357,7 +357,7 @@ Cloudflare Pages (recommended):
 3. Build command: `npm run build`.
 4. Build output directory: `out`.
 5. Configure production environment variables in Pages settings:
-  - `NEXT_PUBLIC_API_URL` (for example: `https://watchllm-api.watchllm.workers.dev`)
+  - `NEXT_PUBLIC_API_URL` (for example: `https://api.watchllm.dev`)
   - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `dodo`)
 
 Optional CLI deployment flow:
@@ -366,7 +366,7 @@ Optional CLI deployment flow:
   - `$env:CLOUDFLARE_API_TOKEN="..."`
   - `$env:CLOUDFLARE_ACCOUNT_ID="..."`
 2. Set build-time public env vars:
-  - `$env:NEXT_PUBLIC_API_URL="https://watchllm-api.watchllm.workers.dev"`
+  - `$env:NEXT_PUBLIC_API_URL="https://api.watchllm.dev"`
   - `$env:NEXT_PUBLIC_PAYMENT_PROVIDER="dodo"`
 3. Build the Pages output:
   - `npm run pages:build --workspace=@watchllm/web`
