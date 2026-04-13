@@ -16,6 +16,10 @@ import type {
 const BASE = (process.env.NEXT_PUBLIC_API_URL ?? 'https://api.watchllm.dev').replace(/\/$/, '');
 const CANONICAL_AUTH_BASE = 'https://api.watchllm.dev';
 
+export type AuthActionResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
 function getAuthBase(): string {
   if (typeof window === 'undefined') {
     return BASE;
@@ -28,6 +32,59 @@ function getAuthBase(): string {
 
   // Prevent OAuth state mismatches caused by workers.dev/API domain mixing.
   return CANONICAL_AUTH_BASE;
+}
+
+function getAuthCallbackURL(): string {
+  if (typeof window === 'undefined') {
+    return 'https://watchllm.dev/dashboard';
+  }
+  return `${window.location.origin}/dashboard`;
+}
+
+function extractErrorMessage(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object') {
+    return null;
+  }
+
+  const record = payload as Record<string, unknown>;
+  const message = record.message;
+  if (typeof message === 'string' && message.length > 0) {
+    return message;
+  }
+
+  const error = record.error;
+  if (typeof error === 'string' && error.length > 0) {
+    return error;
+  }
+
+  if (error && typeof error === 'object') {
+    const nested = (error as Record<string, unknown>).message;
+    if (typeof nested === 'string' && nested.length > 0) {
+      return nested;
+    }
+  }
+
+  return null;
+}
+
+async function getAuthErrorMessage(response: Response): Promise<string> {
+  const fallback = response.statusText || 'Authentication failed';
+  try {
+    const json = (await response.json()) as unknown;
+    return extractErrorMessage(json) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function loginWithSocialProvider(provider: 'github' | 'google'): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const authBase = getAuthBase();
+  const callbackURL = getAuthCallbackURL();
+  window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=${provider}&callbackURL=${encodeURIComponent(callbackURL)}`;
 }
 
 async function request<T>(
@@ -50,14 +107,61 @@ async function request<T>(
 export const auth = {
   /** Redirect to GitHub OAuth */
   loginWithGitHub() {
-    const authBase = getAuthBase();
-    const callbackURL =
-      typeof window === 'undefined'
-        ? 'https://watchllm.dev/dashboard'
-        : `${window.location.origin}/dashboard`;
+    loginWithSocialProvider('github');
+  },
 
-    // Use top-level redirect to avoid extension/adblock fetch blocking.
-    window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
+  /** Redirect to Google OAuth */
+  loginWithGoogle() {
+    loginWithSocialProvider('google');
+  },
+
+  async signInWithEmail(email: string, password: string): Promise<AuthActionResult> {
+    const authBase = getAuthBase();
+    const callbackURL = getAuthCallbackURL();
+
+    const response = await fetch(`${authBase}/api/v1/auth/sign-in/email`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        callbackURL,
+      }),
+    });
+
+    if (!response.ok) {
+      return { ok: false, error: await getAuthErrorMessage(response) };
+    }
+
+    return { ok: true };
+  },
+
+  async signUpWithEmail(name: string, email: string, password: string): Promise<AuthActionResult> {
+    const authBase = getAuthBase();
+    const callbackURL = getAuthCallbackURL();
+
+    const response = await fetch(`${authBase}/api/v1/auth/sign-up/email`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        callbackURL,
+      }),
+    });
+
+    if (!response.ok) {
+      return { ok: false, error: await getAuthErrorMessage(response) };
+    }
+
+    return { ok: true };
   },
 
   async getSession(): Promise<{ user: { id: string; email: string; name?: string; image?: string } | null }> {

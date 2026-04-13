@@ -15,6 +15,9 @@ type AuthState = {
   loading: boolean;
   signOut: () => Promise<void>;
   loginWithGitHub: () => void;
+  loginWithGoogle: () => void;
+  signInWithEmail: (email: string, password: string) => Promise<{ ok: true } | { ok: false; error: string }>;
+  signUpWithEmail: (name: string, email: string, password: string) => Promise<{ ok: true } | { ok: false; error: string }>;
   refetch: () => Promise<void>;
 };
 
@@ -23,6 +26,9 @@ const AuthContext = createContext<AuthState>({
   loading: true,
   signOut: async () => {},
   loginWithGitHub: () => {},
+  loginWithGoogle: () => {},
+  signInWithEmail: async () => ({ ok: false, error: 'Auth provider not ready' }),
+  signUpWithEmail: async () => ({ ok: false, error: 'Auth provider not ready' }),
   refetch: async () => {},
 });
 
@@ -58,6 +64,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         signOut,
         loginWithGitHub: auth.loginWithGitHub,
+        loginWithGoogle: auth.loginWithGoogle,
+        signInWithEmail: auth.signInWithEmail,
+        signUpWithEmail: auth.signUpWithEmail,
         refetch: fetchUser,
       }}
     >

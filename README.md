@@ -284,7 +284,8 @@ npm run dev --workspace=apps/workers/chaos
 ### API worker
 
 - Bindings: DB, TRACES, KV, SIMULATION_QUEUE
-- Auth: BETTER_AUTH_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
+- Auth: BETTER_AUTH_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, optional GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET
+- Better Auth providers enabled: GitHub OAuth, Google OAuth (when configured), and email/password
 - Payment: PAYMENT_PROVIDER, STRIPE_*, DODO_*
 - Observability: SENTRY_DSN
 - Vars: ENVIRONMENT
@@ -359,6 +360,7 @@ Cloudflare Pages (recommended):
 5. Configure production environment variables in Pages settings:
   - `NEXT_PUBLIC_API_URL` (for example: `https://api.watchllm.dev`)
   - `NEXT_PUBLIC_PAYMENT_PROVIDER` (`stripe` or `dodo`)
+  - Optional: `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` (`true` to show Google sign-in button)
 
 Optional CLI deployment flow:
 
@@ -368,6 +370,7 @@ Optional CLI deployment flow:
 2. Set build-time public env vars:
   - `$env:NEXT_PUBLIC_API_URL="https://api.watchllm.dev"`
   - `$env:NEXT_PUBLIC_PAYMENT_PROVIDER="dodo"`
+  - Optional: `$env:NEXT_PUBLIC_GOOGLE_AUTH_ENABLED="true"`
 3. Build the Pages output:
   - `npm run pages:build --workspace=@watchllm/web`
 4. Deploy to Pages:
