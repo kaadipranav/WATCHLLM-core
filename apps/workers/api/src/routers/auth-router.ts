@@ -28,11 +28,33 @@ function normalizeCallbackURL(raw: string | undefined): string | undefined {
   }
 }
 
+function parseOrigin(rawUrl: string | undefined): string | null {
+  if (!rawUrl) {
+    return null;
+  }
+
+  try {
+    return new URL(rawUrl).origin;
+  } catch {
+    return null;
+  }
+}
+
 // Backward-compatible bridge for legacy GET-based clients.
 authRouter.get('/sign-in/social', async (c) => {
   const provider = c.req.query('provider');
-  const callbackURL = normalizeCallbackURL(c.req.query('callbackURL'));
+  const rawCallbackURL = c.req.query('callbackURL');
+  const callbackURL = normalizeCallbackURL(rawCallbackURL);
   const disableRedirect = c.req.query('disableRedirect') === 'true';
+
+  const fallbackOrigin =
+    c.env.ENVIRONMENT === 'development' ? 'http://localhost:3000' : 'https://watchllm.dev';
+  const origin =
+    c.req.header('origin') ??
+    parseOrigin(c.req.header('referer')) ??
+    parseOrigin(rawCallbackURL) ??
+    fallbackOrigin;
+  const referer = c.req.header('referer') ?? `${origin}/`;
 
   const body = JSON.stringify({
     provider,
@@ -45,6 +67,8 @@ authRouter.get('/sign-in/social', async (c) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Origin: origin,
+      Referer: referer,
       ...(c.req.header('cookie') ? { cookie: c.req.header('cookie') as string } : {}),
     },
     body,
