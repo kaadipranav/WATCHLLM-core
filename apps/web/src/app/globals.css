@@ -2062,3 +2062,226 @@ h4 { font-size: 1rem; }
     top: -2rem;
   }
 }
+
+/* -- Lusion Inspired Landing Page -- */
+.lusion-page {
+  --lusion-bg: var(--bg);
+  --lusion-surface: rgba(15, 15, 15, 0.4);
+  --lusion-accent: var(--accent); /* neon cyan/teal */
+  --lusion-accent-dim: var(--accent-dim);
+  --lusion-text: var(--text-primary);
+  
+  position: relative;
+  min-height: 100dvh;
+  background-color: var(--lusion-bg);
+  color: var(--lusion-text);
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.lusion-bg-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 0%, var(--lusion-accent-dim) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lusion-swoosh-container {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1440px;
+  height: 800px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.lusion-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-6) var(--sp-8);
+}
+
+.lusion-logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.lusion-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  margin: 0;
+}
+
+.lusion-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.lusion-pill-dash {
+  width: 24px;
+  height: 2px;
+  background: var(--text-secondary);
+  border-radius: 2px;
+}
+
+.lusion-pill {
+  border-radius: 9999px;
+  padding: 0 var(--sp-6);
+  height: 40px;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.lusion-menu-btn {
+  display: flex;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  padding: var(--sp-2);
+}
+
+.lusion-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-primary);
+}
+
+.lusion-hero {
+  position: relative;
+  z-index: 5;
+  padding: calc(var(--sp-16) * 1.5) var(--sp-8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 70vh;
+}
+
+.lusion-title {
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin: 0;
+  color: var(--text-primary);
+  text-transform: none;
+  max-width: 1200px;
+  mix-blend-mode: normal;
+}
+
+.lusion-content {
+  position: relative;
+  z-index: 10;
+  padding: var(--sp-12) var(--sp-8) var(--sp-24);
+}
+
+.lusion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-12);
+  max-width: 1200px;
+  align-items: end;
+}
+
+.lusion-projects-card {
+  background: var(--surface-2);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  /* Lusion inspired dark container */
+  background: linear-gradient(145deg, #13122c, #0a0a14);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+}
+
+.lusion-browser {
+  background: var(--surface-3);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lusion-browser-header {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.lusion-browser-header span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.lusion-browser-body {
+  height: 60px;
+  opacity: 0.6;
+}
+
+.lusion-description {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  max-width: 440px;
+}
+
+.lusion-description p {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.lusion-approach-cta {
+  align-self: flex-start;
+  border-radius: 9999px;
+  padding: 0 var(--sp-6);
+  height: 44px;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .lusion-header {
+    padding: var(--sp-4);
+  }
+  .lusion-hero {
+    padding: var(--sp-12) var(--sp-4);
+  }
+  .lusion-title {
+    font-size: clamp(3rem, 12vw, 4.5rem);
+  }
+  .lusion-content {
+    padding: var(--sp-8) var(--sp-4);
+  }
+  .lusion-grid {
+    grid-template-columns: 1fr;
+    gap: var(--sp-12);
+  }
+  .lusion-projects-card {
+    order: 2;
+  }
+  .lusion-description {
+    order: 1;
+    max-width: 100%;
+  }
+}
