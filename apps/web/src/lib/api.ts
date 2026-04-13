@@ -53,34 +53,8 @@ export const auth = {
     const authBase = getAuthBase();
     const callbackURL = '/dashboard';
 
-    // Better Auth social sign-in is POST-based in recent versions.
-    void fetch(`${authBase}/api/v1/auth/sign-in/social`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        provider: 'github',
-        callbackURL,
-        disableRedirect: true,
-      }),
-    })
-      .then(async (res) => {
-        if (res.ok) {
-          const data = (await res.json()) as { url?: string };
-          if (data.url) {
-            window.location.href = data.url;
-            return;
-          }
-        }
-
-        // Compatibility fallback for older server behavior.
-        window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
-      })
-      .catch(() => {
-        window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
-      });
+    // Use top-level redirect to avoid extension/adblock fetch blocking.
+    window.location.href = `${authBase}/api/v1/auth/sign-in/social?provider=github&callbackURL=${encodeURIComponent(callbackURL)}`;
   },
 
   async getSession(): Promise<{ user: { id: string; email: string; name?: string; image?: string } | null }> {

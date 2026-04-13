@@ -50,7 +50,28 @@ authRouter.get('/sign-in/social', async (c) => {
     body,
   });
 
-  return auth.handler(request);
+  const response = await auth.handler(request);
+
+  // When invoked as a top-level browser navigation, convert the Better Auth
+  // JSON redirect payload into an actual HTTP redirect.
+  const contentType = response.headers.get('content-type') ?? '';
+  if (response.ok && contentType.includes('application/json')) {
+    const payload = await response
+      .clone()
+      .json()
+      .catch(() => null) as { redirect?: boolean; url?: string } | null;
+
+    if (payload?.redirect === true && typeof payload.url === 'string' && payload.url.length > 0) {
+      const headers = new Headers(response.headers);
+      headers.set('Location', payload.url);
+      return new Response(null, {
+        status: 302,
+        headers,
+      });
+    }
+  }
+
+  return response;
 });
 
 authRouter.all('*', async (c) => {
