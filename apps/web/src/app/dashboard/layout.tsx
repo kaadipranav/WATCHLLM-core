@@ -244,6 +244,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const router = useRouter();
   const [cmdOpen, setCmdOpen] = useState(false);
+  const crumbs = pathname.split('/').filter(Boolean).slice(1);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -275,17 +276,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!user) return null;
 
   return (
-    <div className="dash-shell">
+    <div className="dash-shell polar-dash-shell">
+      <div className="dash-shell-glow" aria-hidden="true" />
+      <div className="dash-shell-ring dash-shell-ring-left" aria-hidden="true" />
+      <div className="dash-shell-ring dash-shell-ring-right" aria-hidden="true" />
+
+      <svg className="dash-shell-scribble" viewBox="0 0 930 420" aria-hidden="true">
+        <path d="M38 316C188 146 338 350 520 170C670 24 768 66 888 208" />
+      </svg>
+
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
 
       {/* Sidebar */}
       <aside className="dash-sidebar">
         <div className="sidebar-logo">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="var(--accent)" strokeWidth="1.5" />
-            <polyline points="12 6 12 12 16 14" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-          <span>Watch<span className="logo-accent">LLM</span></span>
+          <div className="sidebar-logo-mark" aria-hidden="true" />
+          <div className="sidebar-logo-copy">
+            <span>WATCHLLM</span>
+            <small>Agent Reliability Lab</small>
+          </div>
+        </div>
+
+        <div className="sidebar-nav-actions">
+          <Link href="/dashboard/simulations?new=1" className="polar-chip polar-chip-dark">
+            Run Simulation
+          </Link>
+          <button type="button" className="polar-chip polar-chip-outline dash-search-chip" onClick={() => setCmdOpen(true)}>
+            Search
+            <span className="kbd">⌘K</span>
+          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -310,34 +329,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           ))}
         </nav>
-
-        <div className="sidebar-footer">
-          <button
-            onClick={() => setCmdOpen(true)}
-            className="nav-item"
-            style={{ width: '100%' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            Search
-            <span style={{ marginLeft: 'auto', display: 'flex', gap: 3 }}>
-              <span className="kbd">⌘</span><span className="kbd">K</span>
-            </span>
-          </button>
-        </div>
       </aside>
 
       {/* Main */}
       <div className="dash-main">
         <header className="dash-topbar">
           {/* Breadcrumb */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            <Link href="/dashboard" style={{ color: 'var(--text-tertiary)' }}>WatchLLM</Link>
-            {pathname.split('/').filter(Boolean).slice(1).map((seg, i, arr) => (
-              <span key={seg} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: 'var(--text-tertiary)' }}>/</span>
-                <span style={{ color: i === arr.length - 1 ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+          <div className="dash-crumbs">
+            <Link href="/dashboard" className="dash-crumb-root">Dashboard</Link>
+            {crumbs.map((seg, i) => (
+              <span key={`${seg}-${i}`} className="dash-crumb-node">
+                <span className="dash-crumb-divider">/</span>
+                <span className={i === crumbs.length - 1 ? 'dash-crumb-current' : 'dash-crumb-label'}>
                   {seg.charAt(0).toUpperCase() + seg.slice(1)}
                 </span>
               </span>
@@ -347,20 +350,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* Search trigger */}
           <button
             onClick={() => setCmdOpen(true)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              background: 'var(--surface-2)', border: '1px solid var(--border)',
-              borderRadius: 'var(--r-md)', padding: '0 12px', height: 32,
-              color: 'var(--text-tertiary)', fontSize: '0.8125rem', cursor: 'pointer',
-            }}
+            className="dash-search-trigger"
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             Search…
-            <span style={{ display: 'flex', gap: 2, marginLeft: 8 }}>
-              <span className="kbd">⌘K</span>
-            </span>
+            <span className="kbd">⌘K</span>
           </button>
 
           <UserAvatar user={user} />
