@@ -1734,3 +1734,331 @@ h4 { font-size: 1rem; }
     top: -3rem;
   }
 }
+
+/* ── Monument Landing ── */
+.monument-page {
+  --monument-bg: #d8dae3;
+  --monument-bg-soft: #e3e5ed;
+  --monument-ink: #0a0b10;
+  --monument-muted: #262a33;
+  --monument-line: rgba(10, 11, 16, 0.14);
+  --monument-blue: #3344ff;
+  --monument-aqua: #62e0e5;
+
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: clamp(1rem, 2.2vw, 2rem) clamp(1rem, 4vw, 3.6rem) clamp(3.8rem, 8vw, 7.8rem);
+  background:
+    radial-gradient(96rem 48rem at 17% -10%, rgba(255, 255, 255, 0.74), transparent 62%),
+    linear-gradient(160deg, var(--monument-bg-soft) 0%, var(--monument-bg) 48%, #d4d6de 100%);
+  color: var(--monument-ink);
+  isolation: isolate;
+}
+
+.monument-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mix-blend-mode: soft-light;
+}
+
+.monument-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -2;
+  opacity: 0.94;
+  border: clamp(12px, 1.25vw, 19px) solid;
+  animation: monument-float 11s ease-in-out infinite alternate;
+}
+
+.monument-ring-left {
+  width: min(60vw, 55rem);
+  height: min(60vw, 55rem);
+  left: max(-35vw, -24rem);
+  top: 8rem;
+  border-color: var(--monument-blue);
+}
+
+.monument-ring-center {
+  width: min(56vw, 51rem);
+  height: min(56vw, 51rem);
+  left: min(19vw, 16rem);
+  top: -9rem;
+  border-color: rgba(98, 224, 229, 0.92);
+  animation-duration: 13.5s;
+}
+
+.monument-ring-right {
+  width: min(46vw, 40rem);
+  height: min(46vw, 40rem);
+  right: max(-18vw, -14rem);
+  top: -2.5rem;
+  border-color: rgba(98, 224, 229, 0.84);
+  animation-duration: 15s;
+}
+
+.monument-header {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.monument-logo {
+  font-size: clamp(1.6rem, 1.85vw, 2.05rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.monument-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.7rem;
+}
+
+.monument-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.85rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 0 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: transform var(--t-normal) var(--ease), background var(--t-normal) var(--ease), color var(--t-normal) var(--ease), border-color var(--t-normal) var(--ease);
+}
+
+.monument-pill:hover {
+  transform: translateY(-1px);
+}
+
+.monument-pill-dark {
+  background: #202531;
+  color: #f4f6fc;
+}
+
+.monument-pill-dark:hover {
+  background: #151922;
+}
+
+.monument-pill-light {
+  background: rgba(239, 241, 248, 0.86);
+  color: #141824;
+  border-color: rgba(10, 11, 16, 0.06);
+}
+
+.monument-pill-light:hover {
+  background: rgba(249, 250, 253, 0.94);
+}
+
+.monument-hero {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(2.4rem, 6vw, 5.4rem);
+  max-width: min(1250px, 100%);
+}
+
+.monument-kicker {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(10, 11, 16, 0.64);
+}
+
+.monument-title {
+  margin-top: clamp(0.8rem, 1.5vw, 1.2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.08em;
+  font-size: clamp(3.35rem, 10.7vw, 9.55rem);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.monument-lead {
+  margin-top: clamp(1.35rem, 2vw, 2rem);
+  max-width: 60ch;
+  font-size: clamp(1rem, 1.45vw, 1.5rem);
+  line-height: 1.45;
+  color: var(--monument-muted);
+}
+
+.monument-actions {
+  margin-top: clamp(1.3rem, 2.2vw, 2rem);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.72rem;
+}
+
+.monument-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  padding: 0 1.35rem;
+  border-radius: 9999px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: transform var(--t-normal) var(--ease), background var(--t-normal) var(--ease), color var(--t-normal) var(--ease), border-color var(--t-normal) var(--ease);
+}
+
+.monument-cta:hover {
+  transform: translateY(-1px);
+}
+
+.monument-cta-primary {
+  background: var(--monument-ink);
+  color: #f3f5fb;
+}
+
+.monument-cta-primary:hover {
+  background: #171b27;
+}
+
+.monument-cta-secondary {
+  background: rgba(252, 252, 255, 0.58);
+  color: var(--monument-ink);
+  border-color: rgba(10, 11, 16, 0.12);
+}
+
+.monument-cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.monument-statements {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(2.8rem, 6.7vw, 7rem);
+  border-top: 1px solid var(--monument-line);
+}
+
+.monument-statement {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr) minmax(220px, 30rem);
+  align-items: end;
+  gap: clamp(0.8rem, 2.5vw, 2.8rem);
+  padding: clamp(1.75rem, 4vw, 3.4rem) 0;
+  border-bottom: 1px solid var(--monument-line);
+}
+
+.monument-index {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(10, 11, 16, 0.42);
+}
+
+.monument-subtitle {
+  font-size: clamp(2.55rem, 8.35vw, 6.75rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.monument-copy {
+  font-size: clamp(0.95rem, 1.22vw, 1.26rem);
+  line-height: 1.5;
+  color: rgba(10, 11, 16, 0.78);
+  padding-bottom: 0.55rem;
+  max-width: 34ch;
+}
+
+.monument-closer {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(2.2rem, 5vw, 4.2rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.monument-final {
+  font-size: clamp(2.4rem, 6.2vw, 5.5rem);
+  line-height: 0.93;
+  letter-spacing: -0.045em;
+  max-width: 14ch;
+}
+
+@keyframes monument-float {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(-10px) rotate(-1.2deg); }
+}
+
+@media (max-width: 1120px) {
+  .monument-statement {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .monument-copy {
+    max-width: 52ch;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .monument-page {
+    padding-inline: 1rem;
+  }
+
+  .monument-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .monument-nav {
+    justify-content: flex-start;
+  }
+
+  .monument-title {
+    font-size: clamp(2.45rem, 14.5vw, 4.35rem);
+  }
+
+  .monument-subtitle {
+    font-size: clamp(2rem, 13.5vw, 3.85rem);
+  }
+
+  .monument-ring-left {
+    width: 92vw;
+    height: 92vw;
+    left: -57vw;
+    top: 11rem;
+  }
+
+  .monument-ring-center {
+    width: 85vw;
+    height: 85vw;
+    left: 37vw;
+    top: -8rem;
+  }
+
+  .monument-ring-right {
+    width: 68vw;
+    height: 68vw;
+    right: -44vw;
+    top: -2rem;
+  }
+}
