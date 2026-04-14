@@ -8,6 +8,10 @@ from typing import Any, Callable, cast, get_args
 
 import click
 import requests
+from rich.console import Console
+from rich.status import Status
+from rich.table import Table
+from rich.tree import Tree
 
 from ..client import WatchLLMClient
 from ..config import get_api_key, save_api_key
@@ -21,6 +25,109 @@ from ..exceptions import (
 from ..models import AttackCategory
 
 _ALLOWED_CATEGORIES = set(cast(tuple[str, ...], get_args(AttackCategory)))
+console = Console()
+
+_STATUS_STYLES = {
+    "PASSED": "bold green",
+    "FAILED": "bold red",
+    "RUNNING": "cyan",
+    "PENDING": "dim",
+}
+
+
+def _normalize_status_label(raw_status: Any) -> str:
+    if not isinstance(raw_status, str):
+        return "PENDING"
+
+    normalized = raw_status.strip().lower()
+    if normalized in {"passed", "pass", "completed", "success", "succeeded"}:
+        return "PASSED"
+    if normalized in {"failed", "failure", "error", "compromised"}:
+        return "FAILED"
+    if normalized in {"running", "processing", "in_progress", "in-progress"}:
+        return "RUNNING"
+    if normalized in {"pending", "queued", "waiting", "created"}:
+        return "PENDING"
+    return "PENDING"
+
+
+def _status_style(status_label: str) -> str:
+    return _STATUS_STYLES.get(status_label, "dim")
+
+
+def _severity_text(raw_severity: Any) -> str:
+    if isinstance(raw_severity, (int, float)):
+        severity_value = float(raw_severity)
+        severity_style = "bold red" if severity_value >= 0.7 else "dim"
+        return f"[{severity_style}]{severity_value:.2f}[/]"
+    return "[dim]-[/]"
+
+
+def _build_runs_table(runs: list[dict[str, Any]]) -> tuple[Table, bool, bool]:
+    table = Table(header_style="bold", show_header=True)
+    table.add_column("Category", style="cyan")
+    table.add_column("Status", justify="center")
+    table.add_column("Severity", justify="right")
+
+    has_failed = False
+    has_incomplete = False
+
+    if not runs:
+        table.add_row("-", "[dim]PENDING[/]", "[dim]-[/]", style="dim")
+        return table, has_failed, True
+
+    for run in runs:
+        category = run.get("category")
+        category_text = category if isinstance(category, str) else "unknown"
+
+        status_label = _normalize_status_label(run.get("status"))
+        status_style = _status_style(status_label)
+
+        if status_label == "FAILED":
+            has_failed = True
+        if status_label in {"RUNNING", "PENDING"}:
+            has_incomplete = True
+
+        row_style = ""
+        if status_label == "FAILED":
+            row_style = "red"
+        elif status_label == "PASSED":
+            row_style = "green"
+        elif status_label == "PENDING":
+            row_style = "dim"
+
+        table.add_row(
+            category_text,
+            f"[{status_style}]{status_label}[/]",
+            _severity_text(run.get("severity")),
+            style=row_style,
+        )
+
+    return table, has_failed, has_incomplete
+
+
+def _print_error(message: str, hint: str | None = "watchllm doctor") -> None:
+    console.print(f"[bold red]✖ Error:[/] {message}")
+    if hint:
+        console.print(f"[yellow]→ Try:[/] {hint}")
+
+
+def _print_metadata(entries: list[tuple[str, Any]]) -> None:
+    parts: list[str] = []
+    for key, value in entries:
+        if value is None:
+            continue
+        parts.append(f"{key}: {value}")
+
+    if parts:
+        console.print(f"[dim]{' | '.join(parts)}[/]")
+
+
+def _print_check(label: str, passed: bool) -> None:
+    if passed:
+        console.print(f"[bold green]✔[/] {label} [bold green]PASSED[/]")
+    else:
+        console.print(f"[bold red]✖[/] {label} [bold red]FAILED[/]")
 
 
 def _parse_categories(raw_categories: str) -> list[str]:
@@ -100,11 +207,11 @@ def _node_failed(node: dict[str, Any]) -> bool:
     return False
 
 
-def _print_replay_tree(payload: dict[str, Any]) -> None:
+def _print_replay_tree(payload: dict[str, Any], simulation_id: str) -> tuple[bool, int]:
     nodes = _extract_nodes(payload)
     if not nodes:
-        click.echo("No replay graph nodes found.")
-        return
+        console.print("[bold yellow]⚠ Replay graph is empty[/]")
+        return False, 0
 
     edges = _extract_edges(payload)
 
@@ -139,8 +246,11 @@ def _print_replay_tree(payload: dict[str, Any]) -> None:
         roots = list(nodes_by_id.keys())
 
     visited: set[str] = set()
+    failed_nodes = 0
+    tree = Tree(f"[cyan]Simulation[/] [dim]{simulation_id}[/]")
 
-    def visit(node_id: str, depth: int) -> None:
+    def visit(node_id: str, branch: Tree) -> None:
+        nonlocal failed_nodes
         if node_id in visited:
             return
         visited.add(node_id)
@@ -151,18 +261,25 @@ def _print_replay_tree(payload: dict[str, Any]) -> None:
 
         latency_raw = node.get("latency_ms")
         if isinstance(latency_raw, (int, float)):
-            latency_text = f"{float(latency_raw):.0f} ms"
+            latency_text = f"{float(latency_raw):.0f}"
         else:
             latency_text = "n/a"
 
-        failed_marker = " [FAILED]" if _node_failed(node) else ""
-        click.echo(f"{'  ' * depth}- {node_type} ({latency_text}){failed_marker}")
+        node_label = f"{node_type} [dim]({latency_text} ms)[/]"
+        if _node_failed(node):
+            failed_nodes += 1
+            node_label = f"[red]{node_type}[/] [dim]({latency_text} ms)[/] [red][FAILED][/red]"
+
+        child_branch = branch.add(node_label)
 
         for child in children.get(node_id, []):
-            visit(child, depth + 1)
+            visit(child, child_branch)
 
     for root in roots:
-        visit(root, 0)
+        visit(root, tree)
+
+    console.print(tree)
+    return failed_nodes > 0, len(nodes_by_id)
 
 
 @click.group()
@@ -178,15 +295,17 @@ def auth() -> None:
 @auth.command("login")
 def login() -> None:
     """Authenticate with WatchLLM via API key."""
-    click.echo("Get your API key at: https://watchllm.dev/settings/keys")
+    console.print("[cyan]▶ Authentication[/]")
+    console.print("[dim]→ Get your API key at: https://watchllm.dev/settings/keys[/]")
     api_key = click.prompt("Paste your API key", hide_input=True)
 
     if not api_key.startswith("wllm_"):
-        click.echo("Error: Invalid key format.", err=True)
+        console.print("[bold red]✖ Invalid API key format[/]")
         sys.exit(1)
 
     save_api_key(api_key)
-    click.echo("API key saved to ~/.watchllm/config")
+    console.print("[bold green]✔ API key saved[/]")
+    console.print("[dim]path: ~/.watchllm/config[/]")
 
 
 @cli.command()
@@ -196,78 +315,95 @@ def login() -> None:
 @click.option("--timeout", default=300, help="Seconds to wait for completion")
 def simulate(agent: str, categories: str, threshold: str | None, timeout: int) -> None:
     """Launch a simulation and wait for results."""
+    simulation_id_raw: str | None = None
+
     try:
         category_list = _parse_categories(categories)
         _load_agent_function(agent)
 
-        click.echo(f"Launching simulation for {agent}...")
+        console.print(f"[cyan]▶ Launching simulation[/] [dim]agent={agent}[/]")
 
         client = WatchLLMClient()
-        agent_payload = client.register_agent(
-            project_id="default",
-            name=agent,
-            framework=detect_framework(),
-        )
-        agent_id_raw = agent_payload.get("id")
-        if not isinstance(agent_id_raw, str) or not agent_id_raw:
-            raise WatchLLMError("Agent registration response missing id.")
+        with console.status("[cyan]⏳ Registering agent and creating simulation[/]", spinner="dots") as progress:
+            progress = cast(Status, progress)
+            agent_payload = client.register_agent(
+                project_id="default",
+                name=agent,
+                framework=detect_framework(),
+            )
+            agent_id_raw = agent_payload.get("id")
+            if not isinstance(agent_id_raw, str) or not agent_id_raw:
+                raise WatchLLMError("Agent registration response missing id.")
 
-        simulation = client.launch_simulation(
-            agent_id=agent_id_raw,
-            categories=category_list,
-            threshold=threshold,
-        )
-        simulation_id_raw = simulation.get("id")
-        if not isinstance(simulation_id_raw, str) or not simulation_id_raw:
-            raise WatchLLMError("Simulation launch response missing id.")
+            simulation = client.launch_simulation(
+                agent_id=agent_id_raw,
+                categories=category_list,
+                threshold=threshold,
+            )
+            simulation_id_raw = simulation.get("id")
+            if not isinstance(simulation_id_raw, str) or not simulation_id_raw:
+                raise WatchLLMError("Simulation launch response missing id.")
 
-        click.echo(f"Simulation {simulation_id_raw} launched. Waiting for results...")
+            progress.update(
+                f"[cyan]⏳ Monitoring simulation[/] [dim]simulation_id={simulation_id_raw}[/]"
+            )
 
-        deadline = time.time() + timeout
-        while time.time() < deadline:
-            current = client.get_simulation(simulation_id_raw)
-            status_raw = current.get("status")
-            status = status_raw if isinstance(status_raw, str) else "unknown"
-            click.echo(f"  status: {status}")
+            deadline = time.time() + timeout
+            terminal_payload: dict[str, Any] | None = None
 
-            if status in TERMINAL_STATES:
-                runs = _coerce_runs(current.get("runs", []))
-                if threshold:
-                    _evaluate_threshold(threshold, runs)
+            while time.time() < deadline:
+                current = client.get_simulation(simulation_id_raw)
+                normalized = _normalize_status_label(current.get("status"))
+                progress.update(
+                    "[cyan]⏳ Monitoring simulation[/] "
+                    f"[dim]simulation_id={simulation_id_raw} status={normalized}[/]"
+                )
 
-                for run in runs:
-                    category = run.get("category")
-                    run_status = run.get("status")
-                    severity = run.get("severity")
+                status_raw = current.get("status")
+                status_text = status_raw if isinstance(status_raw, str) else ""
+                if status_text in TERMINAL_STATES:
+                    terminal_payload = current
+                    break
 
-                    category_text = category if isinstance(category, str) else "unknown"
-                    status_text = run_status if isinstance(run_status, str) else "unknown"
-                    if isinstance(severity, (int, float)):
-                        severity_text = f"{float(severity):.2f}"
-                    else:
-                        severity_text = "pending"
+                time.sleep(5)
 
-                    click.echo(
-                        f"  {category_text}: {status_text} (severity: {severity_text})"
-                    )
+            if terminal_payload is None:
+                raise WatchLLMTimeoutError(
+                    f"Simulation {simulation_id_raw} did not complete within {timeout}s"
+                )
 
-                click.echo("Simulation completed.")
-                sys.exit(0)
+        runs = _coerce_runs(terminal_payload.get("runs", []))
+        runs_table, has_failed, _ = _build_runs_table(runs)
+        console.print(runs_table)
 
-            time.sleep(5)
+        if threshold:
+            _evaluate_threshold(threshold, runs)
 
-        raise WatchLLMTimeoutError(
-            f"Simulation {simulation_id_raw} did not complete within {timeout}s"
-        )
+        if has_failed:
+            console.print("[bold red]✖ Vulnerabilities detected[/]")
+        else:
+            console.print("[bold green]✔ All checks passed[/]")
+
+        console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
+        sys.exit(0)
 
     except WatchLLMThresholdError as exc:
-        click.echo(f"FAILED: {exc}", err=True)
+        _print_error("Threshold breached", hint="watchllm doctor")
+        console.print(f"[dim]{exc}[/]")
+        console.print("[bold red]✖ Vulnerabilities detected[/]")
+        if simulation_id_raw:
+            console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
         sys.exit(1)
     except WatchLLMTimeoutError as exc:
-        click.echo(f"TIMEOUT: {exc}", err=True)
+        _print_error("Simulation timed out", hint="watchllm doctor")
+        console.print(f"[dim]{exc}[/]")
+        if simulation_id_raw:
+            console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
         sys.exit(3)
     except (WatchLLMError, WatchLLMAuthError, ImportError, AttributeError, ValueError) as exc:
-        click.echo(f"ERROR: {exc}", err=True)
+        _print_error(str(exc), hint="watchllm doctor")
+        if simulation_id_raw:
+            console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
         sys.exit(2)
 
 
@@ -275,69 +411,100 @@ def simulate(agent: str, categories: str, threshold: str | None, timeout: int) -
 @click.option("--simulation", required=True, help="Simulation ID (sim_xxx)")
 def status(simulation: str) -> None:
     """Check simulation status and severity scores."""
+    console.print(f"[cyan]▶ Simulation status[/] [dim]{simulation}[/]")
+
     try:
-        client = WatchLLMClient()
-        simulation_data = client.get_simulation(simulation)
+        with console.status("[cyan]⏳ Fetching status[/]", spinner="dots"):
+            client = WatchLLMClient()
+            simulation_data = client.get_simulation(simulation)
     except (WatchLLMError, WatchLLMAuthError) as exc:
-        click.echo(f"ERROR: {exc}", err=True)
+        _print_error(str(exc), hint="watchllm doctor")
         sys.exit(2)
 
-    status_raw = simulation_data.get("status")
-    status_text = status_raw if isinstance(status_raw, str) else "unknown"
-    click.echo(f"Status: {status_text}")
+    runs = _coerce_runs(simulation_data.get("runs", []))
+    runs_table, has_failed, has_incomplete = _build_runs_table(runs)
+    console.print(runs_table)
 
-    for run in _coerce_runs(simulation_data.get("runs", [])):
-        category = run.get("category")
-        run_status = run.get("status")
-        severity = run.get("severity")
+    overall_status = _normalize_status_label(simulation_data.get("status"))
+    if has_failed or overall_status == "FAILED":
+        console.print("[bold red]✖ Vulnerabilities detected[/]")
+    elif has_incomplete or overall_status in {"RUNNING", "PENDING"}:
+        console.print("[cyan]⏳ RUNNING[/]")
+    else:
+        console.print("[bold green]✔ All checks passed[/]")
 
-        category_text = category if isinstance(category, str) else "unknown"
-        run_status_text = run_status if isinstance(run_status, str) else "unknown"
-        if isinstance(severity, (int, float)):
-            severity_text = f"{float(severity):.2f}"
-        else:
-            severity_text = "pending"
-
-        click.echo(f"  {category_text}: {run_status_text} (severity: {severity_text})")
+    _print_metadata([
+        ("simulation_id", simulation),
+        ("status", overall_status),
+    ])
 
 
 @cli.command()
 @click.option("--simulation", required=True, help="Simulation ID")
 def replay(simulation: str) -> None:
     """Print execution graph tree to terminal."""
+    console.print(f"[cyan]▶ Replay graph[/] [dim]{simulation}[/]")
+
     try:
-        client = WatchLLMClient()
-        replay_payload = client.get_replay(simulation)
+        with console.status("[cyan]⏳ Fetching replay graph[/]", spinner="dots"):
+            client = WatchLLMClient()
+            replay_payload = client.get_replay(simulation)
     except (WatchLLMError, WatchLLMAuthError) as exc:
-        click.echo(f"ERROR: {exc}", err=True)
+        _print_error(str(exc), hint="watchllm doctor")
         sys.exit(2)
 
-    _print_replay_tree(replay_payload)
+    has_failed_nodes, total_nodes = _print_replay_tree(replay_payload, simulation)
+
+    if has_failed_nodes:
+        console.print("[bold red]✖ Vulnerabilities detected[/]")
+    else:
+        console.print("[bold green]✔ All checks passed[/]")
+
+    _print_metadata([
+        ("simulation_id", simulation),
+        ("nodes", total_nodes),
+    ])
 
 
 @cli.command()
 def doctor() -> None:
     """Diagnose your WatchLLM setup."""
+    console.print("[cyan]▶ Running diagnostics[/]")
+
     checks: list[tuple[str, bool]] = []
+    api_key_value: str | None = None
 
-    # Check API key
-    try:
-        get_api_key()
-        checks.append(("API key found", True))
-    except WatchLLMAuthError:
-        checks.append(("API key found", False))
+    with console.status("[cyan]⏳ Executing checks[/]", spinner="dots"):
+        try:
+            api_key_value = get_api_key()
+            checks.append(("API key found", True))
+        except WatchLLMAuthError:
+            checks.append(("API key found", False))
 
-    # Check API reachability
-    try:
-        response = requests.get("https://api.watchllm.dev/health", timeout=5)
-        checks.append(("API reachable", response.status_code == 200))
-    except Exception:
-        checks.append(("API reachable", False))
+        try:
+            response = requests.get("https://api.watchllm.dev/health", timeout=5)
+            checks.append(("API reachable", response.status_code == 200))
+        except Exception:
+            checks.append(("API reachable", False))
 
-    # Print results
+    config_valid = bool(api_key_value and api_key_value.startswith("wllm_"))
+    checks.append(("Config valid", config_valid))
+
     for label, passed in checks:
-        icon = "✓" if passed else "✗"
-        click.echo(f"  {icon} {label}")
+        _print_check(label, passed)
 
     all_pass = all(passed for _, passed in checks)
+    if all_pass:
+        console.print("[bold green]✔ All systems operational[/]")
+    else:
+        console.print("[bold red]✖ Issues detected[/]")
+        console.print("[yellow]→ Run:[/] watchllm auth login")
+
+    passed_count = sum(1 for _, passed in checks if passed)
+    _print_metadata([
+        ("checks", len(checks)),
+        ("passed", passed_count),
+        ("failed", len(checks) - passed_count),
+    ])
+
     sys.exit(0 if all_pass else 1)
