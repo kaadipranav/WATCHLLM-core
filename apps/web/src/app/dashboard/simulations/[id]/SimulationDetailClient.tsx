@@ -264,7 +264,7 @@ export default function SimulationDetailClient(): JSX.Element {
       <div className="page-header">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <h1 style={{ fontSize: '1.5rem' }}>{agentName || 'Agent'}</h1>
+            <h1>{agentName || 'Agent'}</h1>
             <span className={`badge ${sim.status === 'completed' ? 'badge-success' : sim.status === 'failed' ? 'badge-danger' : sim.status === 'running' ? 'badge-info' : 'badge-neutral'}`} style={{ fontSize: '0.8rem' }}>
               {sim.status}
             </span>

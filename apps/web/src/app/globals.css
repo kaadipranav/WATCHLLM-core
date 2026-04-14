@@ -1992,6 +1992,31 @@ h4 { font-size: 1rem; }
   padding-top: 1.25rem;
 }
 
+.polar-dash-shell .page-header {
+  margin-bottom: clamp(1.4rem, 3.5vw, 2.6rem);
+}
+
+.polar-dash-shell .page-header h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 5.2vw, 4.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.052em;
+  font-weight: 800;
+  color: transparent;
+  background: linear-gradient(150deg, #f4f8ff 8%, #cad3f7 62%, rgba(45, 226, 230, 0.92) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-wrap: balance;
+}
+
+.polar-dash-shell .page-header p {
+  margin-top: 0.68rem;
+  max-width: 62ch;
+  font-size: clamp(0.98rem, 1.25vw, 1.16rem);
+  line-height: 1.45;
+  color: rgba(194, 206, 229, 0.9);
+}
+
 .polar-dash-shell .card,
 .polar-dash-shell .stat-card,
 .polar-dash-shell .table-wrap {
@@ -2033,5 +2058,14 @@ h4 { font-size: 1rem; }
 
   .polar-dash-shell .dash-content {
     padding-top: 0.8rem;
+  }
+
+  .polar-dash-shell .page-header h1 {
+    font-size: clamp(2rem, 9vw, 3rem);
+    line-height: 0.93;
+  }
+
+  .polar-dash-shell .page-header p {
+    font-size: 0.96rem;
   }
 }

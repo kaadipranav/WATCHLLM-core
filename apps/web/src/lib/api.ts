@@ -1,5 +1,5 @@
 // Central typed API client for WatchLLM
-// All calls go to the Cloudflare Worker at NEXT_PUBLIC_API_URL
+// Uses NEXT_PUBLIC_API_URL locally, but normalizes to api.watchllm.dev in production
 // Auth is cookie-based (Better Auth session)
 
 import type {
@@ -14,13 +14,13 @@ import type {
 } from '@watchllm/types';
 
 const BASE = (process.env.NEXT_PUBLIC_API_URL ?? 'https://api.watchllm.dev').replace(/\/$/, '');
-const CANONICAL_AUTH_BASE = 'https://api.watchllm.dev';
+const CANONICAL_API_BASE = 'https://api.watchllm.dev';
 
 export type AuthActionResult =
   | { ok: true }
   | { ok: false; error: string };
 
-function getAuthBase(): string {
+function getApiBase(): string {
   if (typeof window === 'undefined') {
     return BASE;
   }
@@ -30,8 +30,12 @@ function getAuthBase(): string {
     return BASE;
   }
 
-  // Prevent OAuth state mismatches caused by workers.dev/API domain mixing.
-  return CANONICAL_AUTH_BASE;
+  // Keep all authenticated requests on the same domain as Better Auth cookies.
+  return CANONICAL_API_BASE;
+}
+
+function getAuthBase(): string {
+  return getApiBase();
 }
 
 function getAuthCallbackURL(): string {
@@ -91,7 +95,7 @@ async function request<T>(
   path: string,
   init: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await fetch(`${getApiBase()}${path}`, {
     ...init,
     credentials: 'include',
     headers: {
