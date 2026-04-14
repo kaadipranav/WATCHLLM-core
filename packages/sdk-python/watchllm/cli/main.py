@@ -58,13 +58,18 @@ def _status_style(status_label: str) -> str:
 def _severity_text(raw_severity: Any) -> str:
     if isinstance(raw_severity, (int, float)):
         severity_value = float(raw_severity)
-        severity_style = "bold red" if severity_value >= 0.7 else "dim"
+        if severity_value >= 0.7:
+            severity_style = "bold red"
+        elif severity_value >= 0.3:
+            severity_style = "bold yellow"
+        else:
+            severity_style = "green"
         return f"[{severity_style}]{severity_value:.2f}[/]"
     return "[dim]-[/]"
 
 
 def _build_runs_table(runs: list[dict[str, Any]]) -> tuple[Table, bool, bool]:
-    table = Table(header_style="bold", show_header=True)
+    table = Table(title="Simulation Results", header_style="bold", show_header=True)
     table.add_column("Category", style="cyan")
     table.add_column("Status", justify="center")
     table.add_column("Severity", justify="right")
@@ -117,17 +122,17 @@ def _print_metadata(entries: list[tuple[str, Any]]) -> None:
     for key, value in entries:
         if value is None:
             continue
-        parts.append(f"{key}: {value}")
+        parts.append(f"[dim]{key}:[/] {value}")
 
     if parts:
-        console.print(f"[dim]{' | '.join(parts)}[/]")
+        console.print(" [dim]|[/] ".join(parts))
 
 
 def _print_check(label: str, passed: bool) -> None:
     if passed:
-        console.print(f"[bold green]✔[/] {label} [bold green]PASSED[/]")
+        console.print(f"[bold green]✔[/] {label}")
     else:
-        console.print(f"[bold red]✖[/] {label} [bold red]FAILED[/]")
+        console.print(f"[bold red]✖[/] {label}")
 
 
 def _parse_categories(raw_categories: str) -> list[str]:
@@ -247,7 +252,7 @@ def _print_replay_tree(payload: dict[str, Any], simulation_id: str) -> tuple[boo
 
     visited: set[str] = set()
     failed_nodes = 0
-    tree = Tree(f"[cyan]Simulation[/] [dim]{simulation_id}[/]")
+    tree = Tree(f"[cyan]▶ Execution Trace[/] [dim]{simulation_id}[/]")
 
     def visit(node_id: str, branch: Tree) -> None:
         nonlocal failed_nodes
@@ -315,16 +320,17 @@ def login() -> None:
 @click.option("--timeout", default=300, help="Seconds to wait for completion")
 def simulate(agent: str, categories: str, threshold: str | None, timeout: int) -> None:
     """Launch a simulation and wait for results."""
+    start_time = time.time()
     simulation_id_raw: str | None = None
 
     try:
         category_list = _parse_categories(categories)
         _load_agent_function(agent)
 
-        console.print(f"[cyan]▶ Launching simulation[/] [dim]agent={agent}[/]")
+        console.print(f"[cyan]▶ Launching simulation[/] [dim]agent:[/] {agent}")
 
         client = WatchLLMClient()
-        with console.status("[cyan]⏳ Registering agent and creating simulation[/]", spinner="dots") as progress:
+        with console.status("[cyan]⏳ Running[/] [dim]initializing[/]", spinner="dots") as progress:
             progress = cast(Status, progress)
             agent_payload = client.register_agent(
                 project_id="default",
@@ -345,7 +351,7 @@ def simulate(agent: str, categories: str, threshold: str | None, timeout: int) -
                 raise WatchLLMError("Simulation launch response missing id.")
 
             progress.update(
-                f"[cyan]⏳ Monitoring simulation[/] [dim]simulation_id={simulation_id_raw}[/]"
+                f"[cyan]⏳ Running[/] [dim]simulation_id:[/] {simulation_id_raw}"
             )
 
             deadline = time.time() + timeout
@@ -355,8 +361,8 @@ def simulate(agent: str, categories: str, threshold: str | None, timeout: int) -
                 current = client.get_simulation(simulation_id_raw)
                 normalized = _normalize_status_label(current.get("status"))
                 progress.update(
-                    "[cyan]⏳ Monitoring simulation[/] "
-                    f"[dim]simulation_id={simulation_id_raw} status={normalized}[/]"
+                    "[cyan]⏳ Running[/] "
+                    f"[dim]simulation_id:[/] {simulation_id_raw} [dim]status:[/] {normalized}"
                 )
 
                 status_raw = current.get("status")
@@ -375,35 +381,46 @@ def simulate(agent: str, categories: str, threshold: str | None, timeout: int) -
         runs = _coerce_runs(terminal_payload.get("runs", []))
         runs_table, has_failed, _ = _build_runs_table(runs)
         console.print(runs_table)
+        console.print(f"[dim]{len(runs)} checks executed[/]")
 
         if threshold:
             _evaluate_threshold(threshold, runs)
 
         if has_failed:
-            console.print("[bold red]✖ Vulnerabilities detected[/]")
+            console.print("[bold red]✖ System compromised[/]")
         else:
-            console.print("[bold green]✔ All checks passed[/]")
+            console.print("[bold green]✔ System secure[/]")
 
-        console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
+        duration = time.time() - start_time
+        console.print(f"[dim]completed in {duration:.1f}s[/]")
+        _print_metadata([
+            ("simulation_id", simulation_id_raw),
+        ])
         sys.exit(0)
 
     except WatchLLMThresholdError as exc:
         _print_error("Threshold breached", hint="watchllm doctor")
         console.print(f"[dim]{exc}[/]")
-        console.print("[bold red]✖ Vulnerabilities detected[/]")
+        console.print("[bold red]✖ System compromised[/]")
         if simulation_id_raw:
-            console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
+            _print_metadata([
+                ("simulation_id", simulation_id_raw),
+            ])
         sys.exit(1)
     except WatchLLMTimeoutError as exc:
         _print_error("Simulation timed out", hint="watchllm doctor")
         console.print(f"[dim]{exc}[/]")
         if simulation_id_raw:
-            console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
+            _print_metadata([
+                ("simulation_id", simulation_id_raw),
+            ])
         sys.exit(3)
     except (WatchLLMError, WatchLLMAuthError, ImportError, AttributeError, ValueError) as exc:
         _print_error(str(exc), hint="watchllm doctor")
         if simulation_id_raw:
-            console.print(f"[dim]simulation_id: {simulation_id_raw}[/]")
+            _print_metadata([
+                ("simulation_id", simulation_id_raw),
+            ])
         sys.exit(2)
 
 
@@ -414,7 +431,7 @@ def status(simulation: str) -> None:
     console.print(f"[cyan]▶ Simulation status[/] [dim]{simulation}[/]")
 
     try:
-        with console.status("[cyan]⏳ Fetching status[/]", spinner="dots"):
+        with console.status("[cyan]⏳ Fetching[/]", spinner="dots"):
             client = WatchLLMClient()
             simulation_data = client.get_simulation(simulation)
     except (WatchLLMError, WatchLLMAuthError) as exc:
@@ -424,14 +441,15 @@ def status(simulation: str) -> None:
     runs = _coerce_runs(simulation_data.get("runs", []))
     runs_table, has_failed, has_incomplete = _build_runs_table(runs)
     console.print(runs_table)
+    console.print(f"[dim]{len(runs)} checks executed[/]")
 
     overall_status = _normalize_status_label(simulation_data.get("status"))
     if has_failed or overall_status == "FAILED":
-        console.print("[bold red]✖ Vulnerabilities detected[/]")
+        console.print("[bold red]✖ System compromised[/]")
     elif has_incomplete or overall_status in {"RUNNING", "PENDING"}:
         console.print("[cyan]⏳ RUNNING[/]")
     else:
-        console.print("[bold green]✔ All checks passed[/]")
+        console.print("[bold green]✔ System secure[/]")
 
     _print_metadata([
         ("simulation_id", simulation),
@@ -446,7 +464,7 @@ def replay(simulation: str) -> None:
     console.print(f"[cyan]▶ Replay graph[/] [dim]{simulation}[/]")
 
     try:
-        with console.status("[cyan]⏳ Fetching replay graph[/]", spinner="dots"):
+        with console.status("[cyan]⏳ Fetching[/]", spinner="dots"):
             client = WatchLLMClient()
             replay_payload = client.get_replay(simulation)
     except (WatchLLMError, WatchLLMAuthError) as exc:
@@ -456,9 +474,9 @@ def replay(simulation: str) -> None:
     has_failed_nodes, total_nodes = _print_replay_tree(replay_payload, simulation)
 
     if has_failed_nodes:
-        console.print("[bold red]✖ Vulnerabilities detected[/]")
+        console.print("[bold red]✖ System compromised[/]")
     else:
-        console.print("[bold green]✔ All checks passed[/]")
+        console.print("[bold green]✔ System secure[/]")
 
     _print_metadata([
         ("simulation_id", simulation),
