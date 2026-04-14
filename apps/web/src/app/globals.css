@@ -183,6 +183,11 @@ img, svg { display: block; }
   font-family: var(--font-text);
 }
 
+.neue-haas-heading {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
 /* ── Typography ── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
@@ -1193,10 +1198,10 @@ h4 { font-size: 1rem; }
 .polar-title {
   margin: 0;
   display: grid;
-  gap: 0.1em;
-  letter-spacing: -0.052em;
-  line-height: 0.88;
-  font-size: clamp(3.3rem, 9.6vw, 10rem);
+  gap: 0.06em;
+  letter-spacing: -0.066em;
+  line-height: 0.82;
+  font-size: clamp(4rem, 12.8vw, 9.1rem);
   text-wrap: balance;
   color: transparent;
   background: linear-gradient(150deg, #f4f8ff 8%, #cad3f7 62%, rgba(45, 226, 230, 0.92) 100%);
@@ -1360,6 +1365,16 @@ h4 { font-size: 1rem; }
   line-height: 0.94;
   letter-spacing: -0.035em;
   text-wrap: balance;
+}
+
+.polar-section-title-major {
+  margin-top: 0.6rem;
+  font-size: clamp(3.75rem, 12vw, 8rem);
+  line-height: 0.84;
+  letter-spacing: -0.062em;
+  max-width: 16ch;
+  color: #f2f7ff;
+  text-shadow: 0 0 34px rgba(79, 140, 255, 0.24);
 }
 
 .polar-theater-card {
@@ -1693,7 +1708,7 @@ h4 { font-size: 1rem; }
 
 @media (min-width: 1450px) {
   .polar-title {
-    font-size: clamp(7.6rem, 10vw, 11.5rem);
+    font-size: clamp(8.2rem, 9.8vw, 9.8rem);
   }
 
   .polar-intro p {
@@ -1704,12 +1719,16 @@ h4 { font-size: 1rem; }
   .polar-section-title {
     font-size: clamp(2.2rem, 2.9vw, 3.5rem);
   }
+
+  .polar-section-title-major {
+    font-size: clamp(5.8rem, 7.6vw, 8.8rem);
+  }
 }
 
 @media (max-width: 1100px) {
   .polar-title {
     max-width: 12ch;
-    font-size: clamp(3rem, 8vw, 7rem);
+    font-size: clamp(3.7rem, 11.2vw, 7.8rem);
   }
 
   .polar-intro p {
@@ -1722,6 +1741,10 @@ h4 { font-size: 1rem; }
 
   .polar-theater {
     grid-template-columns: 1fr;
+  }
+
+  .polar-section-title-major {
+    font-size: clamp(3rem, 10vw, 5.8rem);
   }
 
   .polar-lab-art {
@@ -1768,8 +1791,8 @@ h4 { font-size: 1rem; }
   }
 
   .polar-title {
-    font-size: clamp(2.65rem, 15vw, 4.6rem);
-    line-height: 0.93;
+    font-size: clamp(3.7rem, 18vw, 5.9rem);
+    line-height: 0.86;
   }
 
   .polar-intro {
@@ -1791,6 +1814,11 @@ h4 { font-size: 1rem; }
   .polar-section-title {
     font-size: clamp(1.5rem, 7.5vw, 2.2rem);
     line-height: 0.96;
+  }
+
+  .polar-section-title-major {
+    font-size: clamp(3.2rem, 13.5vw, 5.2rem);
+    line-height: 0.86;
   }
 
   .polar-closer {
@@ -2094,12 +2122,29 @@ h4 { font-size: 1rem; }
 
 .polar-dash-shell .page-header h1 {
   margin: 0;
-  font-size: clamp(2.2rem, 4.9vw, 3.9rem);
-  line-height: 0.92;
-  letter-spacing: 0.03em;
-  font-weight: 800;
+  font-size: clamp(2.05rem, 4.2vw, 3.35rem);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  font-weight: 600;
   color: #edf7ff;
   text-wrap: balance;
+}
+
+.polar-dash-shell .dash-page-title {
+  font-size: clamp(3.05rem, 7.8vw, 4.6rem);
+  line-height: 0.84;
+  letter-spacing: -0.052em;
+  font-weight: 500;
+  color: #f3f8ff;
+  text-shadow: 0 0 26px rgba(79, 140, 255, 0.22);
+  max-width: min(17ch, 100%);
+}
+
+.polar-dash-shell .dash-command-title {
+  font-size: clamp(3rem, 8.6vw, 4.9rem);
+  line-height: 0.82;
+  letter-spacing: 0.05em;
+  max-width: none;
 }
 
 .polar-dash-shell .page-header p {
@@ -2111,9 +2156,10 @@ h4 { font-size: 1rem; }
 }
 
 .ops-command-title {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.07em;
 }
 
 .polar-dash-shell .card,
@@ -2275,6 +2321,16 @@ h4 { font-size: 1rem; }
   .polar-dash-shell .page-header h1 {
     font-size: clamp(2rem, 9vw, 3rem);
     line-height: 0.93;
+  }
+
+  .polar-dash-shell .dash-page-title {
+    font-size: clamp(2.8rem, 12.2vw, 4rem);
+    line-height: 0.86;
+  }
+
+  .polar-dash-shell .dash-command-title {
+    font-size: clamp(2.75rem, 13vw, 4.2rem);
+    letter-spacing: 0.045em;
   }
 
   .polar-dash-shell .page-header p {

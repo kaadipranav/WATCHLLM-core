@@ -185,7 +185,7 @@ export default function ProjectsPage(): JSX.Element {
 
       <div className="page-header">
         <div>
-          <h1>Projects</h1>
+          <h1 className="dash-page-title neue-haas-heading">Projects</h1>
           <p>Organize your AI agents by project.</p>
         </div>
         <button className="btn btn-primary" onClick={() => setCreateOpen(true)}>

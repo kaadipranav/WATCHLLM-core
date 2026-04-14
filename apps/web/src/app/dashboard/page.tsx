@@ -139,7 +139,7 @@ export default function DashboardPage(): JSX.Element {
       {/* Header */}
       <div className="page-header">
         <div>
-          <h1 className="ops-command-title">
+          <h1 className="ops-command-title dash-page-title dash-command-title neue-haas-heading">
             Reliability Command{user?.name ? ` // ${user.name.split(' ')[0].toUpperCase()}` : ''}
           </h1>
           <p>Monitor attack posture, isolate weak paths, and trigger chaos runs before prod gets hit.</p>

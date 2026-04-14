@@ -96,7 +96,7 @@ export default function BillingPage(): JSX.Element {
     <div className="fade-in-up">
       <div className="page-header">
         <div>
-          <h1>Billing</h1>
+          <h1 className="dash-page-title neue-haas-heading">Billing</h1>
           <p>Manage your plan and payment details.</p>
         </div>
       </div>

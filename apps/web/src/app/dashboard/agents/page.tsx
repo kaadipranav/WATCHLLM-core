@@ -148,7 +148,7 @@ export default function AgentsPage(): JSX.Element {
 
       <div className="page-header">
         <div>
-          <h1>Agents</h1>
+          <h1 className="dash-page-title neue-haas-heading">Agents</h1>
           <p>All agents across your projects.</p>
         </div>
         <button className="btn btn-primary" onClick={() => { setError(''); setAddOpen(true); }}>

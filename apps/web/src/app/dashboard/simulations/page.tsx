@@ -194,7 +194,7 @@ export default function SimulationsPage(): JSX.Element {
 
       <div className="page-header">
         <div>
-          <h1>Simulations</h1>
+          <h1 className="dash-page-title neue-haas-heading">Simulations</h1>
           <p>Run adversarial attacks against your agents and inspect results.</p>
         </div>
         <button className="btn btn-primary" onClick={() => { setError(''); setNewOpen(true); }}>

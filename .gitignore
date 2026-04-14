@@ -32,6 +32,7 @@ apps/web/out/
 .mypy_cache/
 
 # Local font source drops
-fonts/neue-haas-grotesk-display-pro-cufonfonts/
-fonts/neue-haas-grotesk-display-pro-cufonfonts.zip
 fonts/
+
+#
+code.md

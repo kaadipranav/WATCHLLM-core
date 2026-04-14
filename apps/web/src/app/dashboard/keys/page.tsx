@@ -160,7 +160,7 @@ export default function ApiKeysPage(): JSX.Element {
 
       <div className="page-header">
         <div>
-          <h1>API Keys</h1>
+          <h1 className="dash-page-title neue-haas-heading">API Keys</h1>
           <p>Use API keys to authenticate the Python SDK and CLI.</p>
         </div>
         <button className="btn btn-primary" onClick={() => setCreateOpen(true)}>
