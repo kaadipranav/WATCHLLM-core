@@ -5,7 +5,7 @@
 
 @font-face {
   font-family: 'NeueHaasGroteskDisplay';
-  src: url('/fonts/NeueHaasDisplayRoman.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: 'NeueHaasGroteskDisplay';
-  src: url('/fonts/NeueHaasDisplayMediu.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'NeueHaasGroteskDisplay';
-  src: url('/fonts/NeueHaasDisplayBold.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -29,7 +29,7 @@
 
 @font-face {
   font-family: 'NeueHaasGroteskText';
-  src: url('/fonts/NeueHaasDisplayRoman.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -37,15 +37,23 @@
 
 @font-face {
   font-family: 'NeueHaasGroteskText';
-  src: url('/fonts/NeueHaasDisplayMediu.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
+  font-family: 'NeueHaasGroteskText';
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Neue Haas Grotesk';
-  src: url('/fonts/NeueHaasDisplayRoman.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -53,7 +61,7 @@
 
 @font-face {
   font-family: 'Neue Haas Grotesk';
-  src: url('/fonts/NeueHaasDisplayMediu.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -61,7 +69,7 @@
 
 @font-face {
   font-family: 'Neue Haas Grotesk';
-  src: url('/fonts/NeueHaasDisplayBold.ttf') format('truetype');
+  src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -154,6 +162,8 @@ html {
 
 body {
   font-family: var(--font-text);
+  font-weight: 400;
+  font-synthesis: none;
   color: var(--text-primary);
   background: var(--bg);
   min-height: 100dvh;
@@ -176,12 +186,12 @@ img, svg { display: block; }
 /* ── Typography ── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
 
-h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 700; letter-spacing: -0.04em; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 500; letter-spacing: -0.04em; }
 h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); }
 h3 { font-size: 1.25rem; }
 h4 { font-size: 1rem; }
@@ -214,7 +224,7 @@ h4 { font-size: 1rem; }
   padding: 0 var(--sp-4);
   height: 36px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 400;
   font-family: var(--font-display);
   cursor: pointer;
   transition:
@@ -239,7 +249,7 @@ h4 { font-size: 1rem; }
 .btn-primary {
   background: var(--accent);
   color: #04120c;
-  font-weight: 600;
+  font-weight: 500;
   box-shadow: 0 0 0 0 var(--accent-glow);
 }
 .btn-primary:hover {
