@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { projects, agents, simulations, type SimulationDetail } from '../../lib/api';
+import { projects, agents, simulations } from '../../lib/api';
 import type { ProjectRow, AgentRow, SimulationRow } from '@watchllm/types';
 import { useAuth } from '../../lib/auth-context';
 
@@ -16,19 +16,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   infinite_loop:     'var(--info)',
   role_confusion:    'var(--info)',
 };
-
-function SeverityBar({ value }: { value: number }) {
-  const pct = Math.round(value * 100);
-  const color = value >= 0.7 ? 'var(--danger)' : value >= 0.4 ? 'var(--warning)' : 'var(--accent)';
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div className="severity-bar" style={{ flex: 1 }}>
-        <div className="severity-fill" style={{ width: `${pct}%`, background: color }} />
-      </div>
-      <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color, minWidth: 30 }}>{pct}%</span>
-    </div>
-  );
-}
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { cls: string; label: string }> = {
@@ -96,13 +83,66 @@ export default function DashboardPage(): JSX.Element {
   const failedSims   = simList.filter((s) => s.status === 'failed');
   const recentSims   = simList.slice(0, 6);
 
+  const statCards = [
+    {
+      label: 'Projects',
+      value: loading ? '–' : projectList.length,
+      sub: 'active projects',
+      accent: '#00d4d4',
+      subDanger: false,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Agents',
+      value: loading ? '–' : agentList.length,
+      sub: 'registered agents',
+      accent: '#00b8ff',
+      subDanger: false,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="8" r="4" /><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Simulations',
+      value: loading ? '–' : simList.length,
+      sub: `${completedSims.length} completed`,
+      accent: '#6aa3ff',
+      subDanger: false,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="4 12 8 12 10 8 14 16 16 12 20 12" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Running',
+      value: loading ? '–' : runningSims.length,
+      sub: failedSims.length > 0 ? `${failedSims.length} failed` : '0 failed',
+      accent: '#ffb347',
+      subDanger: failedSims.length > 0,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 15" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
-    <div className="fade-in-up">
+    <div className="fade-in-up dashboard-home">
       {/* Header */}
       <div className="page-header">
         <div>
-          <h1>Good to see you{user?.name ? `, ${user.name.split(' ')[0]}` : ''}.</h1>
-          <p>Here's what's happening with your agents.</p>
+          <h1 className="ops-command-title">
+            Reliability Command{user?.name ? ` // ${user.name.split(' ')[0].toUpperCase()}` : ''}
+          </h1>
+          <p>Monitor attack posture, isolate weak paths, and trigger chaos runs before prod gets hit.</p>
         </div>
         <Link href="/dashboard/simulations?new=1" className="btn btn-primary">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -114,45 +154,36 @@ export default function DashboardPage(): JSX.Element {
 
       {/* Stat cards */}
       <div className="grid-4" style={{ marginBottom: 32 }}>
-        {[
-          {
-            label: 'Projects',
-            value: loading ? '–' : projectList.length,
-            sub: 'active projects',
-            color: 'var(--accent)',
-          },
-          {
-            label: 'Agents',
-            value: loading ? '–' : agentList.length,
-            sub: 'registered agents',
-            color: 'var(--accent)',
-          },
-          {
-            label: 'Simulations',
-            value: loading ? '–' : simList.length,
-            sub: `${completedSims.length} completed`,
-            color: 'var(--accent-2)',
-          },
-          {
-            label: 'Running',
-            value: loading ? '–' : runningSims.length,
-            sub: `${failedSims.length} failed`,
-            color: runningSims.length > 0 ? 'var(--warning)' : 'var(--text-tertiary)',
-          },
-        ].map((stat) => (
-          <div key={stat.label} className="stat-card">
-            <p className="stat-label">{stat.label}</p>
+        {statCards.map((stat) => (
+          <div
+            key={stat.label}
+            className="stat-card card-hover ops-stat-card"
+            style={{ borderLeftColor: stat.accent }}
+          >
+            <div className="ops-stat-head">
+              <p className="stat-label">{stat.label}</p>
+              <div
+                className="ops-stat-icon"
+                style={{
+                  color: stat.accent,
+                  background: `${stat.accent}1c`,
+                  boxShadow: `0 0 0 1px ${stat.accent}3d, 0 0 24px ${stat.accent}36`,
+                }}
+              >
+                {stat.icon}
+              </div>
+            </div>
             {loading ? (
               <div className="skeleton" style={{ height: 40, width: 60, marginTop: 8 }} />
             ) : (
-              <p className="stat-value" style={{ color: stat.color }}>{stat.value}</p>
+              <p className="stat-value">{stat.value}</p>
             )}
-            <p className="stat-sub">{stat.sub}</p>
+            <p className={`stat-sub${stat.subDanger ? ' stat-sub-danger' : ''}`}>{stat.sub}</p>
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
+      <div className="dashboard-main-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
         {/* Recent simulations */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -167,15 +198,19 @@ export default function DashboardPage(): JSX.Element {
               ))}
             </div>
           ) : recentSims.length === 0 ? (
-            <div className="card empty-state" style={{ padding: '40px' }}>
-              <div className="empty-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="5 3 19 12 5 21 5 3" />
+            <div className="card empty-state ops-empty-state" style={{ padding: '28px 32px' }}>
+              <div className="empty-icon ops-empty-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="5" cy="12" r="1.5" />
+                  <circle cx="12" cy="6" r="1.5" />
+                  <circle cx="19" cy="12" r="1.5" />
+                  <circle cx="12" cy="18" r="1.5" />
+                  <path d="M6.4 11l4.2-3.2M13.4 7.8l4.2 3.2M17.6 13l-4.2 3.2M10.6 16.2L6.4 13" />
                 </svg>
               </div>
               <h3>No simulations yet</h3>
-              <p>Create a project, register an agent, and run your first adversarial simulation.</p>
-              <Link href="/dashboard/simulations?new=1" className="btn btn-primary btn-sm">Run first simulation</Link>
+              <p>No runs yet. Register an agent and fire your first chaos test.</p>
+              <Link href="/dashboard/simulations?new=1" className="btn btn-primary">Run Simulation</Link>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -215,11 +250,13 @@ export default function DashboardPage(): JSX.Element {
         </div>
 
         {/* Right sidebar: quick actions + projects */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className="dashboard-side-column" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Quick actions */}
-          <div className="card">
-            <h3 style={{ fontSize: '0.875rem', marginBottom: 14 }}>Quick Actions</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="card quick-panel">
+            <div className="quick-panel-head">
+              <h3 style={{ fontSize: '0.875rem' }}>Quick Actions</h3>
+            </div>
+            <div className="quick-panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {[
                 { label: 'New Project', href: '/dashboard/projects?new=1', icon: '📁' },
                 { label: 'Register Agent', href: '/dashboard/agents?new=1', icon: '🤖' },
@@ -245,17 +282,18 @@ export default function DashboardPage(): JSX.Element {
           </div>
 
           {/* Projects list */}
-          <div className="card">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div className="card quick-panel">
+            <div className="quick-panel-head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h3 style={{ fontSize: '0.875rem' }}>Projects</h3>
               <Link href="/dashboard/projects" style={{ fontSize: '0.78rem', color: 'var(--accent)' }}>All →</Link>
             </div>
+            <div className="quick-panel-body">
             {loading ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[1, 2].map((i) => <div key={i} className="skeleton" style={{ height: 36 }} />)}
               </div>
             ) : projectList.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <div className="quick-panel-empty" style={{ textAlign: 'left', padding: '8px 2px' }}>
                 <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 12 }}>No projects yet</p>
                 <Link href="/dashboard/projects?new=1" className="btn btn-secondary btn-sm">Create Project</Link>
               </div>
@@ -272,7 +310,10 @@ export default function DashboardPage(): JSX.Element {
                     }}
                     className="quick-action"
                   >
-                    <span>{p.name}</span>
+                    <span className="quick-project-name">
+                      <span className="project-status-dot" aria-hidden="true" />
+                      <span>{p.name}</span>
+                    </span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6" />
                     </svg>
@@ -280,20 +321,10 @@ export default function DashboardPage(): JSX.Element {
                 ))}
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        .quick-action:hover {
-          background: var(--surface-2);
-          color: var(--text-primary);
-        }
-        @media (max-width: 900px) {
-          .grid-4 { grid-template-columns: repeat(2, 1fr); }
-          .dash-content > div:last-child { grid-template-columns: 1fr; }
-        }
-      `}</style>
     </div>
   );
 }

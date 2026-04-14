@@ -277,13 +277,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="dash-shell polar-dash-shell">
+      <div className="dash-shell-matrix" aria-hidden="true" />
       <div className="dash-shell-glow" aria-hidden="true" />
-      <div className="dash-shell-ring dash-shell-ring-left" aria-hidden="true" />
-      <div className="dash-shell-ring dash-shell-ring-right" aria-hidden="true" />
-
-      <svg className="dash-shell-scribble" viewBox="0 0 930 420" aria-hidden="true">
-        <path d="M38 316C188 146 338 350 520 170C670 24 768 66 888 208" />
-      </svg>
 
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
 
@@ -298,7 +293,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         <div className="sidebar-nav-actions">
-          <Link href="/dashboard/simulations?new=1" className="polar-chip polar-chip-dark">
+          <Link href="/dashboard/simulations?new=1" className="sidebar-primary-cta">
             Run Simulation
           </Link>
           <button type="button" className="polar-chip polar-chip-outline dash-search-chip" onClick={() => setCmdOpen(true)}>
@@ -339,7 +334,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link href="/dashboard" className="dash-crumb-root">Dashboard</Link>
             {crumbs.map((seg, i) => (
               <span key={`${seg}-${i}`} className="dash-crumb-node">
-                <span className="dash-crumb-divider">/</span>
+                <span className="dash-crumb-divider">›</span>
                 <span className={i === crumbs.length - 1 ? 'dash-crumb-current' : 'dash-crumb-label'}>
                   {seg.charAt(0).toUpperCase() + seg.slice(1)}
                 </span>
