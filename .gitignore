@@ -30,3 +30,7 @@ apps/web/out/
 # Misc
 *.log
 .mypy_cache/
+
+# Local font source drops
+fonts/neue-haas-grotesk-display-pro-cufonfonts/
+fonts/neue-haas-grotesk-display-pro-cufonfonts.zip

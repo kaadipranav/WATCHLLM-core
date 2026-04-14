@@ -1,9 +1,5 @@
 import Link from 'next/link';
-import { Manrope, Syne } from 'next/font/google';
 import { DashboardCta } from '../components/dashboard-cta';
-
-const syne = Syne({ subsets: ['latin'], weight: ['500', '700', '800'] });
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
 const CAPABILITIES = [
   {
@@ -77,7 +73,7 @@ const ROI_METRICS = [
 
 export default function HomePage(): JSX.Element {
   return (
-    <main className={`polar-page ${manrope.className}`}>
+    <main className="polar-page">
       <div className="polar-atmosphere" aria-hidden="true" />
       <div className="polar-ring polar-ring-left" aria-hidden="true" />
       <div className="polar-ring polar-ring-right" aria-hidden="true" />
@@ -88,7 +84,7 @@ export default function HomePage(): JSX.Element {
 
       <header className="polar-header">
         <div className="polar-brand">
-          <p className={`${syne.className} polar-logo`}>WATCHLLM</p>
+          <p className="polar-logo">WATCHLLM</p>
           <p className="polar-tag">Agent Reliability Lab</p>
         </div>
         <nav className="polar-nav" aria-label="Primary">
@@ -107,14 +103,14 @@ export default function HomePage(): JSX.Element {
       <aside className="polar-index reveal reveal-1" aria-label="Section index">
         {SECTION_INDEX.map((section) => (
           <a key={section.id} href={`#${section.id}`} className="polar-index-link">
-            <span className={`${syne.className} polar-index-no`}>{section.no}</span>
+            <span className="polar-index-no">{section.no}</span>
             <span className="polar-index-text">{section.label}</span>
           </a>
         ))}
       </aside>
 
       <section id="hero" className="polar-hero reveal reveal-2">
-        <h1 className={`${syne.className} polar-title`}>
+        <h1 className="polar-title">
           <span>Pressure-Test</span>
           <span>Every Agent</span>
           <span>Path</span>
@@ -139,15 +135,15 @@ export default function HomePage(): JSX.Element {
 
         <div className="polar-metrics" aria-label="Platform highlights">
           <article className="polar-metric">
-            <p className={`${syne.className} polar-metric-value`}>8</p>
+            <p className="polar-metric-value">8</p>
             <p className="polar-metric-label">attack categories</p>
           </article>
           <article className="polar-metric">
-            <p className={`${syne.className} polar-metric-value`}>0.7+</p>
+            <p className="polar-metric-value">0.7+</p>
             <p className="polar-metric-label">critical severity threshold</p>
           </article>
           <article className="polar-metric">
-            <p className={`${syne.className} polar-metric-value`}>3.2s</p>
+            <p className="polar-metric-value">3.2s</p>
             <p className="polar-metric-label">median run feedback time</p>
           </article>
         </div>
@@ -157,7 +153,7 @@ export default function HomePage(): JSX.Element {
         <p className="polar-proof-label">Teams shipping high-stakes agents trust this workflow</p>
         <div className="polar-proof-track">
           {TRUST_MARKS.map((mark) => (
-            <span key={mark} className={`${syne.className} polar-mark`}>
+            <span key={mark} className="polar-mark">
               {mark}
             </span>
           ))}
@@ -167,13 +163,13 @@ export default function HomePage(): JSX.Element {
       <section id="loop" className="polar-theater reveal reveal-5">
         <div className="polar-theater-intro">
           <p className="polar-eyebrow">Operating loop</p>
-          <h2 className={`${syne.className} polar-section-title`}>
+          <h2 className="polar-section-title">
             Convert every incident into a measurable hardening cycle.
           </h2>
         </div>
 
         <article className="polar-theater-card" aria-label="Sample simulation run">
-          <p className={`${syne.className} polar-theater-title`}>Simulation run: pro-funnel-agent-v4</p>
+          <p className="polar-theater-title">Simulation run: pro-funnel-agent-v4</p>
           <div className="polar-log-lines">
             <p><span>$</span> watchllm simulate --categories prompt_injection,tool_abuse</p>
             <p><span>→</span> Injecting adversarial payload set #07</p>
@@ -186,8 +182,8 @@ export default function HomePage(): JSX.Element {
         <div className="polar-loop-grid" aria-label="Operating loop">
           {LOOP_STEPS.map((step) => (
             <article key={step.phase} className="polar-loop-step">
-              <p className={`${syne.className} polar-loop-phase`}>{step.phase}</p>
-              <h3 className={syne.className}>{step.title}</h3>
+              <p className="polar-loop-phase">{step.phase}</p>
+              <h3>{step.title}</h3>
               <p>{step.detail}</p>
             </article>
           ))}
@@ -197,7 +193,7 @@ export default function HomePage(): JSX.Element {
       <section id="capabilities" className="polar-lab reveal reveal-6">
         <div className="polar-lab-intro">
           <p className="polar-eyebrow">Core capabilities</p>
-          <h2 className={`${syne.className} polar-section-title`}>A reliability stack purpose-built for agent teams.</h2>
+          <h2 className="polar-section-title">A reliability stack purpose-built for agent teams.</h2>
         </div>
 
         <article className="polar-lab-art" aria-hidden="true">
@@ -210,7 +206,7 @@ export default function HomePage(): JSX.Element {
         <div className="polar-cap-grid">
           {CAPABILITIES.map((capability) => (
             <article key={capability.title} className="polar-cap-card">
-              <h2 className={syne.className}>{capability.title}</h2>
+              <h2>{capability.title}</h2>
               <p>{capability.description}</p>
             </article>
           ))}
@@ -220,7 +216,7 @@ export default function HomePage(): JSX.Element {
       <section id="roi" className="polar-roi reveal reveal-7" aria-label="ROI strip">
         <div className="polar-roi-head">
           <p className="polar-eyebrow">ROI strip</p>
-          <h2 className={`${syne.className} polar-section-title`}>
+          <h2 className="polar-section-title">
             Reliability outcomes your engineering and finance teams can both trust.
           </h2>
         </div>
@@ -229,7 +225,7 @@ export default function HomePage(): JSX.Element {
           {ROI_METRICS.map((metric) => (
             <article key={metric.label} className="polar-roi-card">
               <p className="polar-roi-label">{metric.label}</p>
-              <p className={`${syne.className} polar-roi-value`}>{metric.value}</p>
+              <p className="polar-roi-value">{metric.value}</p>
               <p className="polar-roi-delta">{metric.delta}</p>
               <p className="polar-roi-note">{metric.note}</p>
             </article>
@@ -240,7 +236,7 @@ export default function HomePage(): JSX.Element {
       <section className="polar-closer reveal reveal-8">
         <div>
           <p className="polar-closer-kicker">Reliability is a product feature.</p>
-          <h2 className={`${syne.className} polar-closer-title`}>Ship agents your users can trust under pressure.</h2>
+          <h2 className="polar-closer-title">Ship agents your users can trust under pressure.</h2>
         </div>
         <div className="polar-closer-actions">
           <Link className="polar-chip polar-chip-dark" href="/dashboard/settings/billing">
