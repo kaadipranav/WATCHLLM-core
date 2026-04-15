@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { DashboardCta } from '../components/dashboard-cta';
 import { GridBackground } from '../components/motion/grid-background';
+import { HeroGridBoxes } from '../components/motion/hero-grid-boxes';
 import { TextReveal } from '../components/motion/text-reveal';
 
 const CAPABILITIES = [
@@ -113,13 +114,13 @@ export default function HomePage(): JSX.Element {
 
       <section id="hero" className="polar-hero reveal reveal-2">
         <div className="polar-hero-stage">
-          <div className="polar-hero-grid-plane" aria-hidden="true" />
+          <HeroGridBoxes className="polar-hero-grid-plane" rows={14} cols={26} />
           <div className="polar-hero-grid-vignette" aria-hidden="true" />
           <TextReveal
             as="h1"
-            className="polar-title polar-title-hero-stage neue-haas-heading"
+            className="polar-title-hero-stage neue-haas-heading"
             text="Pressure-Test Every Agent Path"
-            amount={0.5}
+            amount={0.2}
             stagger={0.06}
           />
           <p className="polar-hero-subtext">
