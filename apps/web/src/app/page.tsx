@@ -114,15 +114,9 @@ export default function HomePage(): JSX.Element {
 
       <section id="hero" className="polar-hero reveal reveal-2">
         <div className="polar-hero-stage">
-          <HeroGridBoxes className="polar-hero-grid-plane" rows={14} cols={26} />
+          <HeroGridBoxes className="polar-hero-grid-plane" rows={11} cols={20} />
           <div className="polar-hero-grid-vignette" aria-hidden="true" />
-          <TextReveal
-            as="h1"
-            className="polar-title-hero-stage neue-haas-heading"
-            text="Pressure-Test Every Agent Path"
-            amount={0.2}
-            stagger={0.06}
-          />
+          <h1 className="polar-title-hero-stage neue-haas-heading">Pressure-Test Every Agent Path</h1>
           <p className="polar-hero-subtext">
             WatchLLM intentionally breaks your agent in controlled scenarios, captures every decision as a graph,
             and gives your team a direct route from failure to verified fix.
