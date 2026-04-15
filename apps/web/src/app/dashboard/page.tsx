@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { projects, agents, simulations } from '../../lib/api';
 import type { ProjectRow, AgentRow, SimulationRow } from '@watchllm/types';
 import { useAuth } from '../../lib/auth-context';
+import MagicBento, { type MagicBentoItem } from '../../components/motion/magic-bento';
 import { SpotlightCard } from '../../components/motion/spotlight-card';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -84,8 +85,9 @@ export default function DashboardPage(): JSX.Element {
   const failedSims   = simList.filter((s) => s.status === 'failed');
   const recentSims   = simList.slice(0, 6);
 
-  const statCards = [
+  const statCards: MagicBentoItem[] = [
     {
+      key: 'projects',
       label: 'Projects',
       value: loading ? '–' : projectList.length,
       sub: 'active projects',
@@ -98,6 +100,7 @@ export default function DashboardPage(): JSX.Element {
       ),
     },
     {
+      key: 'agents',
       label: 'Agents',
       value: loading ? '–' : agentList.length,
       sub: 'registered agents',
@@ -110,6 +113,7 @@ export default function DashboardPage(): JSX.Element {
       ),
     },
     {
+      key: 'simulations',
       label: 'Simulations',
       value: loading ? '–' : simList.length,
       sub: `${completedSims.length} completed`,
@@ -122,6 +126,7 @@ export default function DashboardPage(): JSX.Element {
       ),
     },
     {
+      key: 'running',
       label: 'Running',
       value: loading ? '–' : runningSims.length,
       sub: failedSims.length > 0 ? `${failedSims.length} failed` : '0 failed',
@@ -153,36 +158,22 @@ export default function DashboardPage(): JSX.Element {
         </Link>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid-4" style={{ marginBottom: 32 }}>
-        {statCards.map((stat) => (
-          <div
-            key={stat.label}
-            className="stat-card card-hover ops-stat-card"
-            style={{ borderLeftColor: stat.accent }}
-          >
-            <div className="ops-stat-head">
-              <p className="stat-label">{stat.label}</p>
-              <div
-                className="ops-stat-icon"
-                style={{
-                  color: stat.accent,
-                  background: `${stat.accent}1c`,
-                  boxShadow: `0 0 0 1px ${stat.accent}3d, 0 0 24px ${stat.accent}36`,
-                }}
-              >
-                {stat.icon}
-              </div>
-            </div>
-            {loading ? (
-              <div className="skeleton" style={{ height: 40, width: 60, marginTop: 8 }} />
-            ) : (
-              <p className="stat-value">{stat.value}</p>
-            )}
-            <p className={`stat-sub${stat.subDanger ? ' stat-sub-danger' : ''}`}>{stat.sub}</p>
-          </div>
-        ))}
-      </div>
+      {/* Magic Bento metrics */}
+      <MagicBento
+        className="dashboard-magic-bento"
+        items={statCards}
+        textAutoHide
+        enableStars
+        enableSpotlight
+        enableBorderGlow
+        enableTilt={false}
+        enableMagnetism={false}
+        clickEffect
+        spotlightRadius={360}
+        particleCount={9}
+        glowColor="0, 212, 212"
+        disableAnimations={false}
+      />
 
       <div className="dashboard-main-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
         {/* Recent simulations */}
