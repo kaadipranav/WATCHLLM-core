@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { DashboardCta } from '../components/dashboard-cta';
-import { BackgroundBoxes } from '../components/motion/background-boxes';
-import { EvervaultCard, Icon } from '../components/motion/evervault-card';
 import { GridBackground } from '../components/motion/grid-background';
 import { TextReveal } from '../components/motion/text-reveal';
 
@@ -78,6 +76,14 @@ const ROI_METRICS = [
 export default function HomePage(): JSX.Element {
   return (
     <main className="polar-page">
+      <div className="polar-atmosphere" aria-hidden="true" />
+      <div className="polar-ring polar-ring-left" aria-hidden="true" />
+      <div className="polar-ring polar-ring-right" aria-hidden="true" />
+
+      <svg className="polar-scribble" viewBox="0 0 930 420" aria-hidden="true">
+        <path d="M38 316C188 146 338 350 520 170C670 24 768 66 888 208" />
+      </svg>
+
       <header className="polar-header">
         <div className="polar-brand">
           <p className="polar-logo">WATCHLLM</p>
@@ -107,24 +113,23 @@ export default function HomePage(): JSX.Element {
 
       <section id="hero" className="polar-hero reveal reveal-2">
         <div className="polar-hero-stage">
-          <BackgroundBoxes className="polar-hero-boxes" />
-          <div className="polar-hero-boxes-mask" aria-hidden="true" />
+          <div className="polar-hero-grid-plane" aria-hidden="true" />
+          <div className="polar-hero-grid-vignette" aria-hidden="true" />
           <TextReveal
             as="h1"
-            className="polar-title neue-haas-heading"
-            lines={['Pressure-Test', 'Every Agent', 'Path']}
-            amount={0.52}
-            stagger={0.08}
+            className="polar-title polar-title-hero-stage neue-haas-heading"
+            text="Pressure-Test Every Agent Path"
+            amount={0.5}
+            stagger={0.06}
           />
+          <p className="polar-hero-subtext">
+            WatchLLM intentionally breaks your agent in controlled scenarios, captures every decision as a graph,
+            and gives your team a direct route from failure to verified fix.
+          </p>
         </div>
       </section>
 
       <section className="polar-intro reveal reveal-3">
-        <p>
-          WatchLLM intentionally breaks your agent in controlled scenarios, captures every decision as a graph,
-          and gives your team a direct route from failure to verified fix.
-        </p>
-
         <div className="polar-intro-actions">
           <Link className="polar-approach" href="/dashboard/settings/billing">
             <span className="polar-dot" aria-hidden="true" />
@@ -198,14 +203,6 @@ export default function HomePage(): JSX.Element {
 
       <section id="capabilities" className="polar-lab reveal reveal-6">
         <GridBackground className="polar-capabilities-grid" />
-        <div className="polar-cap-diagrams" aria-hidden="true">
-          <div className="polar-atmosphere" />
-          <div className="polar-ring polar-ring-left" />
-          <div className="polar-ring polar-ring-right" />
-          <svg className="polar-scribble" viewBox="0 0 930 420">
-            <path d="M38 316C188 146 338 350 520 170C670 24 768 66 888 208" />
-          </svg>
-        </div>
         <div className="polar-lab-intro">
           <p className="polar-eyebrow">Core capabilities</p>
           <TextReveal
@@ -226,12 +223,7 @@ export default function HomePage(): JSX.Element {
 
         <div className="polar-cap-grid">
           {CAPABILITIES.map((capability) => (
-            <article key={capability.title} className="polar-cap-card polar-evervault-card">
-              <Icon className="polar-evervault-icon polar-evervault-icon-tl" />
-              <Icon className="polar-evervault-icon polar-evervault-icon-tr" />
-              <Icon className="polar-evervault-icon polar-evervault-icon-bl" />
-              <Icon className="polar-evervault-icon polar-evervault-icon-br" />
-              <EvervaultCard text={capability.title} />
+            <article key={capability.title} className="polar-cap-card">
               <h2>{capability.title}</h2>
               <p>{capability.description}</p>
             </article>
