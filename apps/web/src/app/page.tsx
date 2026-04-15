@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { DashboardCta } from '../components/dashboard-cta';
+import { GridBackground } from '../components/motion/grid-background';
+import { TextReveal } from '../components/motion/text-reveal';
 
 const CAPABILITIES = [
   {
@@ -110,11 +112,13 @@ export default function HomePage(): JSX.Element {
       </aside>
 
       <section id="hero" className="polar-hero reveal reveal-2">
-        <h1 className="polar-title neue-haas-heading">
-          <span>Pressure-Test</span>
-          <span>Every Agent</span>
-          <span>Path</span>
-        </h1>
+        <TextReveal
+          as="h1"
+          className="polar-title neue-haas-heading"
+          lines={['Pressure-Test', 'Every Agent', 'Path']}
+          amount={0.52}
+          stagger={0.08}
+        />
       </section>
 
       <section className="polar-intro reveal reveal-3">
@@ -163,9 +167,13 @@ export default function HomePage(): JSX.Element {
       <section id="loop" className="polar-theater reveal reveal-5">
         <div className="polar-theater-intro">
           <p className="polar-eyebrow">Operating loop</p>
-          <h2 className="polar-section-title polar-section-title-major neue-haas-heading">
-            Convert every incident into a measurable hardening cycle.
-          </h2>
+          <TextReveal
+            as="h2"
+            className="polar-section-title polar-section-title-major neue-haas-heading"
+            text="Convert every incident into a measurable hardening cycle."
+            amount={0.38}
+            stagger={0.042}
+          />
         </div>
 
         <article className="polar-theater-card" aria-label="Sample simulation run">
@@ -191,9 +199,16 @@ export default function HomePage(): JSX.Element {
       </section>
 
       <section id="capabilities" className="polar-lab reveal reveal-6">
+        <GridBackground className="polar-capabilities-grid" />
         <div className="polar-lab-intro">
           <p className="polar-eyebrow">Core capabilities</p>
-          <h2 className="polar-section-title polar-section-title-major neue-haas-heading">A reliability stack purpose-built for agent teams.</h2>
+          <TextReveal
+            as="h2"
+            className="polar-section-title polar-section-title-major neue-haas-heading"
+            text="A reliability stack purpose-built for agent teams."
+            amount={0.38}
+            stagger={0.042}
+          />
         </div>
 
         <article className="polar-lab-art" aria-hidden="true">

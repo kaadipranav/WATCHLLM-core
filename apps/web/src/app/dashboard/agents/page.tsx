@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { agents, projects } from '../../../lib/api';
 import type { AgentRow, ProjectRow } from '@watchllm/types';
+import { SpotlightCard } from '../../../components/motion/spotlight-card';
 
 const FRAMEWORKS = ['langchain', 'crewai', 'openai', 'autogen', 'custom'];
 
@@ -164,16 +165,18 @@ export default function AgentsPage(): JSX.Element {
           {[1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: 90, borderRadius: 'var(--r-lg)' }} />)}
         </div>
       ) : allAgents.length === 0 ? (
-        <div className="card empty-state">
-          <div className="empty-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="8" r="4" /><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-            </svg>
+        <SpotlightCard>
+          <div className="card empty-state">
+            <div className="empty-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="8" r="4" /><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+              </svg>
+            </div>
+            <h3>No agents yet</h3>
+            <p>Register your first agent to start running adversarial simulations.</p>
+            <button className="btn btn-primary btn-sm" onClick={() => setAddOpen(true)}>Register Agent</button>
           </div>
-          <h3>No agents yet</h3>
-          <p>Register your first agent to start running adversarial simulations.</p>
-          <button className="btn btn-primary btn-sm" onClick={() => setAddOpen(true)}>Register Agent</button>
-        </div>
+        </SpotlightCard>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
           {allAgents.map((agent) => (

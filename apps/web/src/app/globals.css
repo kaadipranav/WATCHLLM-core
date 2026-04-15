@@ -183,6 +183,27 @@ img, svg { display: block; }
   font-family: var(--font-text);
 }
 
+.text-reveal-line {
+  display: block;
+  overflow: hidden;
+}
+
+.text-reveal-word-shell {
+  display: inline-block;
+  overflow: hidden;
+  margin-right: 0.24em;
+  vertical-align: top;
+}
+
+.text-reveal-word-shell:last-child {
+  margin-right: 0;
+}
+
+.text-reveal-word {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
 .neue-haas-heading {
   font-family: var(--font-display);
   font-weight: 500;
@@ -307,6 +328,30 @@ h4 { font-size: 1rem; }
   border-color: var(--border-strong);
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
+}
+
+.spotlight-card {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.spotlight-card-glow {
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+
+.spotlight-card-content {
+  position: relative;
+  z-index: 2;
+}
+
+.spotlight-card-content > .card {
+  border-radius: inherit;
 }
 
 .glass {
@@ -1461,6 +1506,56 @@ h4 { font-size: 1rem; }
   gap: clamp(1rem, 3vw, 2.5rem);
   align-items: stretch;
   scroll-margin-top: 7rem;
+  position: relative;
+  isolation: isolate;
+}
+
+.grid-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.grid-background-lines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(233, 246, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(233, 246, 255, 0.08) 1px, transparent 1px);
+  background-size: 34px 34px;
+  opacity: 0.14;
+}
+
+.grid-background-gradient {
+  position: absolute;
+  inset: -18%;
+  background:
+    radial-gradient(circle at 20% 22%, rgba(45, 226, 230, 0.18), transparent 52%),
+    radial-gradient(circle at 74% 76%, rgba(79, 140, 255, 0.16), transparent 56%);
+  opacity: 0.5;
+}
+
+.grid-background-fade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 43%, rgba(7, 10, 18, 0.9) 100%);
+}
+
+.polar-capabilities-grid {
+  inset: -14% -8%;
+  opacity: 0.85;
+  z-index: 0;
+}
+
+.polar-lab > .polar-capabilities-grid {
+  z-index: 0;
+}
+
+.polar-lab > :not(.polar-capabilities-grid) {
+  position: relative;
+  z-index: 1;
 }
 
 .polar-lab-art {
@@ -1737,6 +1832,10 @@ h4 { font-size: 1rem; }
 
   .polar-lab {
     grid-template-columns: 1fr;
+  }
+
+  .polar-capabilities-grid {
+    inset: -8% -5%;
   }
 
   .polar-theater {
