@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { projects, agents, simulations } from '../../lib/api';
 import type { ProjectRow, AgentRow, SimulationRow } from '@watchllm/types';
 import { useAuth } from '../../lib/auth-context';
-import { SpotlightCard } from '../../components/motion/spotlight-card';
 
 const CATEGORY_COLORS: Record<string, string> = {
   prompt_injection:  'var(--danger)',
@@ -199,54 +198,51 @@ export default function DashboardPage(): JSX.Element {
               ))}
             </div>
           ) : recentSims.length === 0 ? (
-            <SpotlightCard>
-              <div className="card empty-state ops-empty-state" style={{ padding: '28px 32px' }}>
-                <div className="empty-icon ops-empty-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="5" cy="12" r="1.5" />
-                    <circle cx="12" cy="6" r="1.5" />
-                    <circle cx="19" cy="12" r="1.5" />
-                    <circle cx="12" cy="18" r="1.5" />
-                    <path d="M6.4 11l4.2-3.2M13.4 7.8l4.2 3.2M17.6 13l-4.2 3.2M10.6 16.2L6.4 13" />
-                  </svg>
-                </div>
-                <h3>No simulations yet</h3>
-                <p>No runs yet. Register an agent and fire your first chaos test.</p>
-                <Link href="/dashboard/simulations?new=1" className="btn btn-primary">Run Simulation</Link>
+            <div className="card empty-state ops-empty-state" style={{ padding: '28px 32px' }}>
+              <div className="empty-icon ops-empty-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="5" cy="12" r="1.5" />
+                  <circle cx="12" cy="6" r="1.5" />
+                  <circle cx="19" cy="12" r="1.5" />
+                  <circle cx="12" cy="18" r="1.5" />
+                  <path d="M6.4 11l4.2-3.2M13.4 7.8l4.2 3.2M17.6 13l-4.2 3.2M10.6 16.2L6.4 13" />
+                </svg>
               </div>
-            </SpotlightCard>
+              <h3>No simulations yet</h3>
+              <p>No runs yet. Register an agent and fire your first chaos test.</p>
+              <Link href="/dashboard/simulations?new=1" className="btn btn-primary">Run Simulation</Link>
+            </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {recentSims.map((sim) => {
                 const cats = parseCategories(sim.config_json);
                 return (
-                  <SpotlightCard key={sim.id}>
-                    <Link
-                      href={`/dashboard/simulations/${sim.id}`}
-                      className="card card-hover"
-                      style={{ display: 'block', padding: '16px 20px', textDecoration: 'none' }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                            {sim.id.slice(0, 18)}…
-                          </code>
-                          <StatusBadge status={sim.status} />
-                          {sim.parent_sim_id && (
-                            <span className="badge badge-purple">Fork</span>
-                          )}
-                        </div>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>{timeAgo(sim.created_at)}</span>
+                  <Link
+                    key={sim.id}
+                    href={`/dashboard/simulations/${sim.id}`}
+                    className="card card-hover"
+                    style={{ display: 'block', padding: '16px 20px', textDecoration: 'none' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                          {sim.id.slice(0, 18)}…
+                        </code>
+                        <StatusBadge status={sim.status} />
+                        {sim.parent_sim_id && (
+                          <span className="badge badge-purple">Fork</span>
+                        )}
                       </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                        {cats.map((cat) => (
-                          <span key={cat} className="cat-chip" style={{ borderColor: CATEGORY_COLORS[cat] ? `${CATEGORY_COLORS[cat]}33` : undefined }}>
-                            {cat}
-                          </span>
-                        ))}
-                      </div>
-                    </Link>
-                  </SpotlightCard>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>{timeAgo(sim.created_at)}</span>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                      {cats.map((cat) => (
+                        <span key={cat} className="cat-chip" style={{ borderColor: CATEGORY_COLORS[cat] ? `${CATEGORY_COLORS[cat]}33` : undefined }}>
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                  </Link>
                 );
               })}
             </div>
@@ -256,7 +252,7 @@ export default function DashboardPage(): JSX.Element {
         {/* Right sidebar: quick actions + projects */}
         <div className="dashboard-side-column" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Quick actions */}
-          <SpotlightCard className="card quick-panel">
+          <div className="card quick-panel">
             <div className="quick-panel-head">
               <h3 style={{ fontSize: '0.875rem' }}>Quick Actions</h3>
             </div>
@@ -283,7 +279,7 @@ export default function DashboardPage(): JSX.Element {
                 </Link>
               ))}
             </div>
-          </SpotlightCard>
+          </div>
 
           {/* Projects list */}
           <div className="card quick-panel">

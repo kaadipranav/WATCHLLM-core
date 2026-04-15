@@ -1,8 +1,5 @@
 import Link from 'next/link';
 import { DashboardCta } from '../components/dashboard-cta';
-import { GridBackground } from '../components/motion/grid-background';
-import { HeroGridBoxes } from '../components/motion/hero-grid-boxes';
-import { TextReveal } from '../components/motion/text-reveal';
 
 const CAPABILITIES = [
   {
@@ -113,18 +110,19 @@ export default function HomePage(): JSX.Element {
       </aside>
 
       <section id="hero" className="polar-hero reveal reveal-2">
-        <div className="polar-hero-stage">
-          <HeroGridBoxes className="polar-hero-grid-plane" rows={11} cols={20} />
-          <div className="polar-hero-grid-vignette" aria-hidden="true" />
-          <h1 className="polar-title-hero-stage neue-haas-heading">Pressure-Test Every Agent Path</h1>
-          <p className="polar-hero-subtext">
-            WatchLLM intentionally breaks your agent in controlled scenarios, captures every decision as a graph,
-            and gives your team a direct route from failure to verified fix.
-          </p>
-        </div>
+        <h1 className="polar-title neue-haas-heading">
+          <span>Pressure-Test</span>
+          <span>Every Agent</span>
+          <span>Path</span>
+        </h1>
       </section>
 
       <section className="polar-intro reveal reveal-3">
+        <p>
+          WatchLLM intentionally breaks your agent in controlled scenarios, captures every decision as a graph,
+          and gives your team a direct route from failure to verified fix.
+        </p>
+
         <div className="polar-intro-actions">
           <Link className="polar-approach" href="/dashboard/settings/billing">
             <span className="polar-dot" aria-hidden="true" />
@@ -165,13 +163,9 @@ export default function HomePage(): JSX.Element {
       <section id="loop" className="polar-theater reveal reveal-5">
         <div className="polar-theater-intro">
           <p className="polar-eyebrow">Operating loop</p>
-          <TextReveal
-            as="h2"
-            className="polar-section-title polar-section-title-major neue-haas-heading"
-            text="Convert every incident into a measurable hardening cycle."
-            amount={0.38}
-            stagger={0.042}
-          />
+          <h2 className="polar-section-title polar-section-title-major neue-haas-heading">
+            Convert every incident into a measurable hardening cycle.
+          </h2>
         </div>
 
         <article className="polar-theater-card" aria-label="Sample simulation run">
@@ -197,16 +191,9 @@ export default function HomePage(): JSX.Element {
       </section>
 
       <section id="capabilities" className="polar-lab reveal reveal-6">
-        <GridBackground className="polar-capabilities-grid" />
         <div className="polar-lab-intro">
           <p className="polar-eyebrow">Core capabilities</p>
-          <TextReveal
-            as="h2"
-            className="polar-section-title polar-section-title-major neue-haas-heading"
-            text="A reliability stack purpose-built for agent teams."
-            amount={0.38}
-            stagger={0.042}
-          />
+          <h2 className="polar-section-title polar-section-title-major neue-haas-heading">A reliability stack purpose-built for agent teams.</h2>
         </div>
 
         <article className="polar-lab-art" aria-hidden="true">

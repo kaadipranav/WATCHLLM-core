@@ -81,6 +81,24 @@ async function getAuthErrorMessage(response: Response): Promise<string> {
   }
 }
 
+function getAuthNetworkErrorMessage(error: unknown): string {
+  const fallback = 'Unable to reach the authentication service. Please try again.';
+  if (!(error instanceof Error)) {
+    return fallback;
+  }
+
+  const message = error.message.trim();
+  if (!message) {
+    return fallback;
+  }
+
+  if (message.toLowerCase().includes('failed to fetch')) {
+    return fallback;
+  }
+
+  return message;
+}
+
 function loginWithSocialProvider(provider: 'github' | 'google'): void {
   if (typeof window === 'undefined') {
     return;
@@ -123,49 +141,57 @@ export const auth = {
     const authBase = getAuthBase();
     const callbackURL = getAuthCallbackURL();
 
-    const response = await fetch(`${authBase}/api/v1/auth/sign-in/email`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        callbackURL,
-      }),
-    });
+    try {
+      const response = await fetch(`${authBase}/api/v1/auth/sign-in/email`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          callbackURL,
+        }),
+      });
 
-    if (!response.ok) {
-      return { ok: false, error: await getAuthErrorMessage(response) };
+      if (!response.ok) {
+        return { ok: false, error: await getAuthErrorMessage(response) };
+      }
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: getAuthNetworkErrorMessage(error) };
     }
-
-    return { ok: true };
   },
 
   async signUpWithEmail(name: string, email: string, password: string): Promise<AuthActionResult> {
     const authBase = getAuthBase();
     const callbackURL = getAuthCallbackURL();
 
-    const response = await fetch(`${authBase}/api/v1/auth/sign-up/email`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-        callbackURL,
-      }),
-    });
+    try {
+      const response = await fetch(`${authBase}/api/v1/auth/sign-up/email`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          callbackURL,
+        }),
+      });
 
-    if (!response.ok) {
-      return { ok: false, error: await getAuthErrorMessage(response) };
+      if (!response.ok) {
+        return { ok: false, error: await getAuthErrorMessage(response) };
+      }
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: getAuthNetworkErrorMessage(error) };
     }
-
-    return { ok: true };
   },
 
   async getSession(): Promise<{ user: { id: string; email: string; name?: string; image?: string } | null }> {

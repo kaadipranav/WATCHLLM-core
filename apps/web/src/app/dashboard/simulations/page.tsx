@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { agents, projects, simulations } from '../../../lib/api';
 import type { AgentRow, ProjectRow, SimulationRow, AttackCategory } from '@watchllm/types';
 import { ALL_ATTACK_CATEGORIES, TIER_LIMITS } from '@watchllm/types';
-import { SpotlightCard } from '../../../components/motion/spotlight-card';
 
 const CATEGORY_ICONS: Record<string, string> = {
   prompt_injection: '💉', tool_abuse: '🔧', hallucination: '👻',
@@ -211,18 +210,16 @@ export default function SimulationsPage(): JSX.Element {
           {[1, 2, 3, 4].map((i) => <div key={i} className="skeleton" style={{ height: 90, borderRadius: 'var(--r-lg)' }} />)}
         </div>
       ) : simList.length === 0 ? (
-        <SpotlightCard>
-          <div className="card empty-state">
-            <div className="empty-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-            </div>
-            <h3>No simulations yet</h3>
-            <p>Launch your first adversarial simulation to test your agents.</p>
-            <button className="btn btn-primary btn-sm" onClick={() => setNewOpen(true)}>Launch Simulation</button>
+        <div className="card empty-state">
+          <div className="empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
           </div>
-        </SpotlightCard>
+          <h3>No simulations yet</h3>
+          <p>Launch your first adversarial simulation to test your agents.</p>
+          <button className="btn btn-primary btn-sm" onClick={() => setNewOpen(true)}>Launch Simulation</button>
+        </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {simList.map((sim) => {

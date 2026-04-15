@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { billing, type SubscriptionStatus } from '../../../../lib/api';
 import { useAuth } from '../../../../lib/auth-context';
 import { TIER_LIMITS } from '@watchllm/types';
-import { SpotlightCard } from '../../../../components/motion/spotlight-card';
 
 const PAYMENT_PROVIDER = (process.env.NEXT_PUBLIC_PAYMENT_PROVIDER ?? 'dodo') as 'stripe' | 'dodo';
 
@@ -151,7 +150,7 @@ export default function BillingPage(): JSX.Element {
           const priceStr = tier === 'free' ? 'Free' : tier === 'pro' ? pricing.pro : pricing.team;
 
           return (
-            <SpotlightCard
+            <div
               key={tier}
               className="card"
               style={{
@@ -203,7 +202,7 @@ export default function BillingPage(): JSX.Element {
                   </div>
                 )}
               </div>
-            </SpotlightCard>
+            </div>
           );
         })}
       </div>

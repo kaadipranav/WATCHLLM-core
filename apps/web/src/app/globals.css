@@ -183,27 +183,6 @@ img, svg { display: block; }
   font-family: var(--font-text);
 }
 
-.text-reveal-line {
-  display: block;
-  overflow: hidden;
-}
-
-.text-reveal-word-shell {
-  display: inline-block;
-  overflow: hidden;
-  margin-right: 0.24em;
-  vertical-align: top;
-}
-
-.text-reveal-word-shell:last-child {
-  margin-right: 0;
-}
-
-.text-reveal-word {
-  display: inline-block;
-  will-change: transform, opacity, filter;
-}
-
 .neue-haas-heading {
   font-family: var(--font-display);
   font-weight: 500;
@@ -328,30 +307,6 @@ h4 { font-size: 1rem; }
   border-color: var(--border-strong);
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
-}
-
-.spotlight-card {
-  position: relative;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.spotlight-card-glow {
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: screen;
-}
-
-.spotlight-card-content {
-  position: relative;
-  z-index: 2;
-}
-
-.spotlight-card-content > .card {
-  border-radius: inherit;
 }
 
 .glass {
@@ -1057,7 +1012,7 @@ h4 { font-size: 1rem; }
   width: min(55vw, 52rem);
   height: min(55vw, 52rem);
   left: max(-28vw, -20rem);
-  top: clamp(34rem, 46vw, 54rem);
+  top: 10rem;
   border-color: rgba(79, 103, 255, 0.84);
 }
 
@@ -1065,7 +1020,7 @@ h4 { font-size: 1rem; }
   width: min(40vw, 35rem);
   height: min(40vw, 35rem);
   right: max(-14vw, -10rem);
-  top: clamp(24rem, 34vw, 42rem);
+  top: -4rem;
   border-color: rgba(45, 226, 230, 0.86);
   animation-duration: 15s;
 }
@@ -1073,7 +1028,7 @@ h4 { font-size: 1rem; }
 .polar-scribble {
   position: absolute;
   right: max(-18vw, -12rem);
-  top: clamp(36rem, 48vw, 58rem);
+  top: 10rem;
   width: min(68vw, 58rem);
   height: auto;
   z-index: -1;
@@ -1236,95 +1191,8 @@ h4 { font-size: 1rem; }
 }
 
 .polar-hero {
-  padding-top: clamp(2rem, 4vw, 3.3rem);
+  padding-top: clamp(2.2rem, 5.3vw, 5.2rem);
   scroll-margin-top: 7rem;
-}
-
-.polar-hero-stage {
-  position: relative;
-  min-height: clamp(19rem, 44vw, 30rem);
-  border-radius: 0.78rem;
-  border: 1px solid rgba(133, 156, 198, 0.24);
-  overflow: hidden;
-  display: grid;
-  place-content: center;
-  text-align: center;
-  padding: clamp(2.6rem, 5.4vw, 5.8rem) clamp(1.1rem, 5vw, 4rem);
-  background:
-    radial-gradient(120% 84% at 50% -8%, rgba(72, 108, 184, 0.2) 0%, rgba(8, 16, 38, 0.22) 40%, transparent 78%),
-    linear-gradient(180deg, #0b1a3f 0%, #071332 54%, #050e26 100%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 30px 64px rgba(2, 8, 20, 0.56);
-  isolation: isolate;
-}
-
-.polar-hero-grid-plane {
-  position: absolute;
-  inset: -55% -30% -40%;
-  transform-origin: 50% 0%;
-  transform: perspective(920px) rotateX(67deg) scale(1.3) translateY(8%);
-  opacity: 0.62;
-  pointer-events: auto;
-}
-
-.hero-grid-boxes {
-  --hero-grid-cols: 26;
-  display: grid;
-  grid-template-columns: repeat(var(--hero-grid-cols), minmax(0, 1fr));
-  gap: 0;
-  contain: layout paint style;
-}
-
-.hero-grid-box-cell {
-  min-height: 52px;
-  border-top: 1px solid rgba(162, 196, 255, 0.18);
-  border-right: 1px solid rgba(162, 196, 255, 0.15);
-  background: rgba(11, 24, 58, 0.26);
-  transition: background-color 90ms ease, box-shadow 90ms ease;
-}
-
-.hero-grid-box-cell:hover {
-  background: rgba(45, 226, 230, 0.48);
-  box-shadow: inset 0 0 16px rgba(45, 226, 230, 0.44), 0 0 20px rgba(45, 226, 230, 0.4);
-}
-
-.polar-hero-grid-vignette {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 50% 32%, rgba(121, 170, 255, 0.16), transparent 52%),
-    radial-gradient(circle at 50% 58%, rgba(5, 9, 22, 0.24), transparent 68%),
-    linear-gradient(180deg, rgba(4, 9, 21, 0.08) 0%, rgba(2, 8, 20, 0.62) 88%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.polar-title-hero-stage {
-  position: relative;
-  z-index: 2;
-  margin: 0;
-  display: block;
-  font-size: clamp(3rem, 7.6vw, 5.8rem);
-  line-height: 0.9;
-  letter-spacing: -0.046em;
-  color: #eff5ff;
-  background: none;
-  background-image: none;
-  background-clip: border-box;
-  -webkit-background-clip: border-box;
-  -webkit-text-fill-color: #eff5ff;
-  text-shadow: 0 18px 48px rgba(6, 12, 30, 0.56);
-  max-width: 18ch;
-}
-
-.polar-hero-subtext {
-  position: relative;
-  z-index: 2;
-  margin: 1.05rem auto 0;
-  max-width: 46ch;
-  font-size: clamp(1rem, 1.6vw, 1.45rem);
-  line-height: 1.42;
-  color: rgba(219, 232, 255, 0.74);
-  text-wrap: pretty;
 }
 
 .polar-title {
@@ -1342,7 +1210,7 @@ h4 { font-size: 1rem; }
 }
 
 .polar-intro {
-  margin-top: clamp(1.25rem, 3.4vw, 2.8rem);
+  margin-top: clamp(2rem, 5vw, 5rem);
   margin-left: auto;
   max-width: min(51rem, 100%);
   display: grid;
@@ -1593,56 +1461,6 @@ h4 { font-size: 1rem; }
   gap: clamp(1rem, 3vw, 2.5rem);
   align-items: stretch;
   scroll-margin-top: 7rem;
-  position: relative;
-  isolation: isolate;
-}
-
-.grid-background {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.grid-background-lines {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(233, 246, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(233, 246, 255, 0.08) 1px, transparent 1px);
-  background-size: 34px 34px;
-  opacity: 0.14;
-}
-
-.grid-background-gradient {
-  position: absolute;
-  inset: -18%;
-  background:
-    radial-gradient(circle at 20% 22%, rgba(45, 226, 230, 0.18), transparent 52%),
-    radial-gradient(circle at 74% 76%, rgba(79, 140, 255, 0.16), transparent 56%);
-  opacity: 0.5;
-}
-
-.grid-background-fade {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 43%, rgba(7, 10, 18, 0.9) 100%);
-}
-
-.polar-capabilities-grid {
-  inset: -14% -8%;
-  opacity: 0.85;
-  z-index: 0;
-}
-
-.polar-lab > .polar-capabilities-grid {
-  z-index: 0;
-}
-
-.polar-lab > :not(.polar-capabilities-grid) {
-  position: relative;
-  z-index: 1;
 }
 
 .polar-lab-art {
@@ -1866,22 +1684,6 @@ h4 { font-size: 1rem; }
   50% { opacity: 0.92; }
 }
 
-@keyframes polar-hero-grid-drift {
-  from {
-    transform: perspective(920px) rotateX(67deg) scale(1.3) translateY(10%);
-  }
-  to {
-    transform: perspective(920px) rotateX(67deg) scale(1.34) translateY(5%);
-  }
-}
-
-@media (pointer: coarse) {
-  .hero-grid-box-cell:hover {
-    background: rgba(11, 24, 58, 0.26);
-    box-shadow: none;
-  }
-}
-
 @keyframes nav-enter {
   from {
     opacity: 0;
@@ -1929,24 +1731,12 @@ h4 { font-size: 1rem; }
     font-size: clamp(3.7rem, 11.2vw, 7.8rem);
   }
 
-  .polar-hero-stage {
-    min-height: clamp(18rem, 46vw, 24rem);
-  }
-
-  .polar-title-hero-stage {
-    font-size: clamp(2.75rem, 8.5vw, 4.8rem);
-  }
-
   .polar-intro p {
     font-size: clamp(1.08rem, 1.95vw, 1.42rem);
   }
 
   .polar-lab {
     grid-template-columns: 1fr;
-  }
-
-  .polar-capabilities-grid {
-    inset: -8% -5%;
   }
 
   .polar-theater {
@@ -2005,32 +1795,6 @@ h4 { font-size: 1rem; }
     line-height: 0.86;
   }
 
-  .polar-hero-stage {
-    min-height: clamp(16rem, 74vw, 22rem);
-    border-radius: 0.62rem;
-    padding: clamp(2.1rem, 7vw, 3.5rem) clamp(0.9rem, 5vw, 1.4rem);
-  }
-
-  .polar-hero-grid-plane {
-    inset: -70% -42% -54%;
-  }
-
-  .hero-grid-box-cell {
-    min-height: 40px;
-  }
-
-  .polar-title-hero-stage {
-    font-size: clamp(2.15rem, 10.2vw, 3.5rem);
-    line-height: 0.94;
-    letter-spacing: -0.04em;
-  }
-
-  .polar-hero-subtext {
-    margin-top: 0.82rem;
-    font-size: clamp(0.88rem, 3.7vw, 1.06rem);
-    max-width: 34ch;
-  }
-
   .polar-intro {
     margin-left: 0;
   }
@@ -2065,20 +1829,14 @@ h4 { font-size: 1rem; }
     width: 86vw;
     height: 86vw;
     left: -49vw;
-    top: 43rem;
+    top: 11rem;
   }
 
   .polar-ring-right {
     width: 73vw;
     height: 73vw;
     right: -44vw;
-    top: 38rem;
-  }
-
-  .polar-scribble {
-    top: 46rem;
-    right: -52vw;
-    width: 118vw;
+    top: -3rem;
   }
 }
 

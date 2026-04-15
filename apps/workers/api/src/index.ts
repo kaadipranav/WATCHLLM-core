@@ -13,6 +13,24 @@ import type { Env } from './types/env';
 
 const app = new Hono<{ Bindings: Env }>();
 
+const PRODUCTION_ALLOWED_ORIGINS = new Set([
+  'https://watchllm.dev',
+  'https://www.watchllm.dev',
+  'https://watchllm-web.pages.dev',
+]);
+
+function resolveCorsOrigin(origin: string | undefined, environment: string): string {
+  if (environment === 'development') {
+    return origin ?? 'http://localhost:3000';
+  }
+
+  if (!origin) {
+    return 'https://watchllm.dev';
+  }
+
+  return PRODUCTION_ALLOWED_ORIGINS.has(origin) ? origin : 'https://watchllm.dev';
+}
+
 // Middleware
 app.use('*', logger());
 
@@ -20,9 +38,7 @@ app.use(
   '*',
   cors({
     origin: (origin, c) => {
-      const environment = c.env.ENVIRONMENT;
-      if (environment === 'development') return origin;
-      return 'https://watchllm.dev';
+      return resolveCorsOrigin(origin, c.env.ENVIRONMENT);
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization', 'X-WatchLLM-Api-Key'],
