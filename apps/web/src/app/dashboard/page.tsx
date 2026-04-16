@@ -2,42 +2,16 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { projects, agents, simulations } from '../../lib/api';
-import type { ProjectRow, AgentRow, SimulationRow } from '@watchllm/types';
-import { useAuth } from '../../lib/auth-context';
-
-const CATEGORY_COLORS: Record<string, string> = {
-  prompt_injection:  'var(--danger)',
-  jailbreak:         'var(--danger)',
-  data_exfiltration: 'var(--danger)',
-  tool_abuse:        'var(--warning)',
-  hallucination:     'var(--warning)',
-  context_poisoning: 'var(--warning)',
-  infinite_loop:     'var(--info)',
-  role_confusion:    'var(--info)',
-};
-
-function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { cls: string; label: string }> = {
-    queued:    { cls: 'badge-neutral', label: 'Queued' },
-    running:   { cls: 'badge-info',    label: 'Running' },
-    completed: { cls: 'badge-success', label: 'Completed' },
-    failed:    { cls: 'badge-danger',  label: 'Failed' },
-  };
-  const { cls, label } = map[status] ?? { cls: 'badge-neutral', label: status };
-  return (
-    <span className={`badge ${cls}`}>
-      {status === 'running' && <span className="dot dot-success dot-pulse" style={{ width: 5, height: 5 }} />}
-      {label}
-    </span>
-  );
-}
+import { agents, projects, simulations } from '../../lib/api';
+import type { AgentRow, ProjectRow, SimulationRow } from '@watchllm/types';
 
 function parseCategories(configJson: string): string[] {
   try {
     const cfg = JSON.parse(configJson) as { categories?: string[] };
     return cfg.categories ?? [];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
 
 function timeAgo(ts: number): string {
@@ -48,282 +22,216 @@ function timeAgo(ts: number): string {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
+function StatusBadge({ status }: { status: string }): JSX.Element {
+  const normalized = status.toLowerCase();
+  const color = normalized === 'completed'
+    ? 'bg-emerald-400'
+    : normalized === 'running'
+      ? 'bg-emerald-300'
+      : normalized === 'failed'
+        ? 'bg-rose-400'
+        : 'bg-zinc-500';
+
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded border border-white/10 bg-black px-2 py-0.5 text-[11px] capitalize text-zinc-300">
+      <span className={`h-1.5 w-1.5 rounded-full ${color}`} />
+      {normalized}
+    </span>
+  );
+}
+
 export default function DashboardPage(): JSX.Element {
-  const { user } = useAuth();
   const [projectList, setProjectList] = useState<ProjectRow[]>([]);
   const [agentList, setAgentList] = useState<AgentRow[]>([]);
   const [simList, setSimList] = useState<SimulationRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const [pRes, sRes] = await Promise.all([
-        projects.list(),
-        simulations.list(),
-      ]);
+    async function load(): Promise<void> {
+      const [pRes, sRes] = await Promise.all([projects.list(), simulations.list()]);
       const projectRows = pRes.data ?? [];
       setProjectList(projectRows);
       setSimList(sRes.data ?? []);
 
-      // Load agents across all projects (first 3 projects)
       if (projectRows.length > 0) {
-        const agentResults = await Promise.all(
-          projectRows.slice(0, 3).map((p) => agents.list(p.id))
-        );
+        const agentResults = await Promise.all(projectRows.slice(0, 6).map((p) => agents.list(p.id)));
         setAgentList(agentResults.flatMap((r) => r.data ?? []));
       }
 
       setLoading(false);
     }
+
     void load();
   }, []);
 
-  const completedSims = simList.filter((s) => s.status === 'completed');
-  const runningSims  = simList.filter((s) => s.status === 'running');
-  const failedSims   = simList.filter((s) => s.status === 'failed');
-  const recentSims   = simList.slice(0, 6);
+  const completedSims = simList.filter((s) => s.status === 'completed').length;
+  const runningSims = simList.filter((s) => s.status === 'running').length;
+  const failedSims = simList.filter((s) => s.status === 'failed').length;
+  const recentSims = simList.slice(0, 8);
 
-  const statCards = [
+  const metrics = [
     {
       label: 'Projects',
-      value: loading ? '–' : projectList.length,
-      sub: 'active projects',
-      accent: '#00d4d4',
-      subDanger: false,
-      icon: (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-        </svg>
-      ),
+      value: projectList.length,
+      detail: 'active projects',
     },
     {
       label: 'Agents',
-      value: loading ? '–' : agentList.length,
-      sub: 'registered agents',
-      accent: '#00b8ff',
-      subDanger: false,
-      icon: (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="8" r="4" /><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-        </svg>
-      ),
+      value: agentList.length,
+      detail: 'registered agents',
     },
     {
       label: 'Simulations',
-      value: loading ? '–' : simList.length,
-      sub: `${completedSims.length} completed`,
-      accent: '#6aa3ff',
-      subDanger: false,
-      icon: (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="4 12 8 12 10 8 14 16 16 12 20 12" />
-        </svg>
-      ),
+      value: simList.length,
+      detail: `${completedSims} completed`,
     },
     {
       label: 'Running',
-      value: loading ? '–' : runningSims.length,
-      sub: failedSims.length > 0 ? `${failedSims.length} failed` : '0 failed',
-      accent: '#ffb347',
-      subDanger: failedSims.length > 0,
-      icon: (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 15" />
-        </svg>
-      ),
+      value: runningSims,
+      detail: `${failedSims} failed`,
     },
   ];
 
   return (
-    <div className="fade-in-up dashboard-home">
-      {/* Header */}
-      <div className="page-header">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="ops-command-title dash-page-title dash-command-title neue-haas-heading">
-            Reliability Command{user?.name ? ` // ${user.name.split(' ')[0].toUpperCase()}` : ''}
-          </h1>
-          <p>Monitor attack posture, isolate weak paths, and trigger chaos runs before prod gets hit.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-white">Overview</h1>
+          <p className="mt-1 text-sm text-zinc-400">Monitor reliability posture and trigger chaos runs before shipping.</p>
         </div>
-        <Link href="/dashboard/simulations?new=1" className="btn btn-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Run Simulation
+        <Link
+          href="/dashboard/simulations?new=1"
+          className="inline-flex h-9 items-center rounded-md bg-[#00C896] px-3 text-sm font-semibold text-black transition hover:bg-[#0fd7a4]"
+        >
+          + Run Simulation
         </Link>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid-4" style={{ marginBottom: 32 }}>
-        {statCards.map((stat) => (
-          <div
-            key={stat.label}
-            className="stat-card card-hover ops-stat-card"
-            style={{ borderLeftColor: stat.accent }}
-          >
-            <div className="ops-stat-head">
-              <p className="stat-label">{stat.label}</p>
-              <div
-                className="ops-stat-icon"
-                style={{
-                  color: stat.accent,
-                  background: `${stat.accent}1c`,
-                  boxShadow: `0 0 0 1px ${stat.accent}3d, 0 0 24px ${stat.accent}36`,
-                }}
-              >
-                {stat.icon}
-              </div>
-            </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map((metric) => (
+          <div key={metric.label} className="rounded-lg border border-white/10 bg-[#111111] p-4">
+            <p className="text-xs uppercase tracking-wide text-zinc-500">{metric.label}</p>
             {loading ? (
-              <div className="skeleton" style={{ height: 40, width: 60, marginTop: 8 }} />
+              <div className="mt-3 h-8 w-14 animate-pulse rounded bg-zinc-800" />
             ) : (
-              <p className="stat-value">{stat.value}</p>
+              <p className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">{metric.value}</p>
             )}
-            <p className={`stat-sub${stat.subDanger ? ' stat-sub-danger' : ''}`}>{stat.sub}</p>
+            <p className="mt-1 text-xs text-zinc-400">{metric.detail}</p>
           </div>
         ))}
       </div>
 
-      <div className="dashboard-main-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
-        {/* Recent simulations */}
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <h3 style={{ fontSize: '0.9375rem' }}>Recent Simulations</h3>
-            <Link href="/dashboard/simulations" style={{ fontSize: '0.8125rem', color: 'var(--accent)' }}>View all →</Link>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+        <section className="rounded-lg border border-white/10 bg-[#111111]">
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+            <h2 className="text-sm font-medium text-zinc-200">Recent simulations</h2>
+            <Link href="/dashboard/simulations" className="text-xs text-zinc-400 transition hover:text-zinc-200">
+              View all
+            </Link>
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="space-y-2 p-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="skeleton" style={{ height: 72, borderRadius: 'var(--r-lg)' }} />
+                <div key={i} className="h-14 animate-pulse rounded border border-white/10 bg-black/40" />
               ))}
             </div>
           ) : recentSims.length === 0 ? (
-            <div className="card empty-state ops-empty-state" style={{ padding: '28px 32px' }}>
-              <div className="empty-icon ops-empty-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="5" cy="12" r="1.5" />
-                  <circle cx="12" cy="6" r="1.5" />
-                  <circle cx="19" cy="12" r="1.5" />
-                  <circle cx="12" cy="18" r="1.5" />
-                  <path d="M6.4 11l4.2-3.2M13.4 7.8l4.2 3.2M17.6 13l-4.2 3.2M10.6 16.2L6.4 13" />
-                </svg>
-              </div>
-              <h3>No simulations yet</h3>
-              <p>No runs yet. Register an agent and fire your first chaos test.</p>
-              <Link href="/dashboard/simulations?new=1" className="btn btn-primary">Run Simulation</Link>
+            <div className="m-4 rounded-lg border border-dashed border-white/15 bg-black/30 px-5 py-8 text-center">
+              <p className="text-sm font-medium text-zinc-200">No simulations yet</p>
+              <p className="mt-1 text-xs text-zinc-400">Run your first chaos test to populate observability data.</p>
+              <Link
+                href="/dashboard/simulations?new=1"
+                className="mt-4 inline-flex h-8 items-center rounded-md bg-[#00C896] px-3 text-xs font-semibold text-black transition hover:bg-[#0fd7a4]"
+              >
+                + Run Simulation
+              </Link>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div>
               {recentSims.map((sim) => {
-                const cats = parseCategories(sim.config_json);
+                const categories = parseCategories(sim.config_json);
                 return (
                   <Link
                     key={sim.id}
                     href={`/dashboard/simulations/${sim.id}`}
-                    className="card card-hover"
-                    style={{ display: 'block', padding: '16px 20px', textDecoration: 'none' }}
+                    className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 text-sm transition hover:bg-white/5 last:border-b-0"
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                          {sim.id.slice(0, 18)}…
-                        </code>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <code className="truncate text-xs text-zinc-500">{sim.id}</code>
                         <StatusBadge status={sim.status} />
-                        {sim.parent_sim_id && (
-                          <span className="badge badge-purple">Fork</span>
-                        )}
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>{timeAgo(sim.created_at)}</span>
+                      <p className="mt-1 truncate text-xs text-zinc-400">
+                        {categories.length > 0 ? categories.join(' • ') : 'No categories'}
+                      </p>
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                      {cats.map((cat) => (
-                        <span key={cat} className="cat-chip" style={{ borderColor: CATEGORY_COLORS[cat] ? `${CATEGORY_COLORS[cat]}33` : undefined }}>
-                          {cat}
-                        </span>
-                      ))}
-                    </div>
+                    <span className="shrink-0 text-xs text-zinc-500">{timeAgo(sim.created_at)}</span>
                   </Link>
                 );
               })}
             </div>
           )}
-        </div>
+        </section>
 
-        {/* Right sidebar: quick actions + projects */}
-        <div className="dashboard-side-column" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Quick actions */}
-          <div className="card quick-panel">
-            <div className="quick-panel-head">
-              <h3 style={{ fontSize: '0.875rem' }}>Quick Actions</h3>
+        <aside className="space-y-4">
+          <section className="rounded-lg border border-white/10 bg-[#111111]">
+            <div className="border-b border-white/10 px-4 py-3">
+              <h2 className="text-sm font-medium text-zinc-200">Quick actions</h2>
             </div>
-            <div className="quick-panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div className="p-2">
               {[
-                { label: 'New Project', href: '/dashboard/projects?new=1', icon: '📁' },
-                { label: 'Register Agent', href: '/dashboard/agents?new=1', icon: '🤖' },
-                { label: 'Run Simulation', href: '/dashboard/simulations?new=1', icon: '▶' },
-                { label: 'Create API Key', href: '/dashboard/keys?new=1', icon: '🔑' },
+                { label: 'New Project', href: '/dashboard/projects?new=1' },
+                { label: 'Register Agent', href: '/dashboard/agents?new=1' },
+                { label: 'Run Simulation', href: '/dashboard/simulations?new=1' },
+                { label: 'Create API Key', href: '/dashboard/keys?new=1' },
               ].map((action) => (
                 <Link
                   key={action.href}
                   href={action.href}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '8px 10px', borderRadius: 'var(--r-md)',
-                    fontSize: '0.85rem', color: 'var(--text-secondary)',
-                    transition: 'background 0.15s ease, color 0.15s ease',
-                  }}
-                  className="quick-action"
+                  className="flex items-center justify-between rounded-md px-2.5 py-2 text-sm text-zinc-400 transition hover:bg-white/5 hover:text-zinc-200"
                 >
-                  <span style={{ fontSize: '0.875rem', opacity: 0.7 }}>{action.icon}</span>
                   {action.label}
+                  <span className="text-zinc-600">→</span>
                 </Link>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Projects list */}
-          <div className="card quick-panel">
-            <div className="quick-panel-head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ fontSize: '0.875rem' }}>Projects</h3>
-              <Link href="/dashboard/projects" style={{ fontSize: '0.78rem', color: 'var(--accent)' }}>All →</Link>
+          <section className="rounded-lg border border-white/10 bg-[#111111]">
+            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+              <h2 className="text-sm font-medium text-zinc-200">Projects</h2>
+              <Link href="/dashboard/projects" className="text-xs text-zinc-400 transition hover:text-zinc-200">
+                All
+              </Link>
             </div>
-            <div className="quick-panel-body">
+
             {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {[1, 2].map((i) => <div key={i} className="skeleton" style={{ height: 36 }} />)}
+              <div className="space-y-2 p-3">
+                {[1, 2].map((i) => (
+                  <div key={i} className="h-8 animate-pulse rounded bg-zinc-800/70" />
+                ))}
               </div>
             ) : projectList.length === 0 ? (
-              <div className="quick-panel-empty" style={{ textAlign: 'left', padding: '8px 2px' }}>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 12 }}>No projects yet</p>
-                <Link href="/dashboard/projects?new=1" className="btn btn-secondary btn-sm">Create Project</Link>
+              <div className="p-4">
+                <p className="text-xs text-zinc-400">No projects yet.</p>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {projectList.slice(0, 5).map((p) => (
+              <div>
+                {projectList.slice(0, 6).map((project) => (
                   <Link
-                    key={p.id}
-                    href={`/dashboard/projects/${p.id}`}
-                    style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      padding: '8px 10px', borderRadius: 'var(--r-md)',
-                      fontSize: '0.85rem', color: 'var(--text-secondary)',
-                    }}
-                    className="quick-action"
+                    key={project.id}
+                    href={`/dashboard/projects/${project.id}`}
+                    className="flex items-center gap-2 border-b border-white/10 px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-white/5 last:border-b-0"
                   >
-                    <span className="quick-project-name">
-                      <span className="project-status-dot" aria-hidden="true" />
-                      <span>{p.name}</span>
-                    </span>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 18 15 12 9 6" />
-                    </svg>
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+                    <span className="truncate">{project.name}</span>
                   </Link>
                 ))}
               </div>
             )}
-            </div>
-          </div>
-        </div>
+          </section>
+        </aside>
       </div>
     </div>
   );

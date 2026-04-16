@@ -18,9 +18,13 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/node": "20.14.15",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.10",
+    "tailwindcss": "^4.2.2",
     "typescript": "5.5.4",
     "wrangler": "^4.81.0"
   }

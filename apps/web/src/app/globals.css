@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ===================================================
    WatchLLM Design System
    "concern-ingly good" — terminal-dark, LLM-native
