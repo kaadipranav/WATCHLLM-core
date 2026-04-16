@@ -96,7 +96,7 @@ export default function DashboardPage(): JSX.Element {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white">Overview</h1>
+          <h1 className="!text-2xl font-semibold tracking-tight text-white">Overview</h1>
           <p className="mt-1 text-sm text-zinc-400">Monitor reliability posture and trigger chaos runs before shipping.</p>
         </div>
         <Link
@@ -124,7 +124,7 @@ export default function DashboardPage(): JSX.Element {
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
         <section className="rounded-lg border border-white/10 bg-[#111111]">
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <h2 className="text-sm font-medium text-zinc-200">Recent simulations</h2>
+            <h2 className="!text-sm font-medium text-zinc-200">Recent simulations</h2>
             <Link href="/dashboard/simulations" className="text-xs text-zinc-400 transition hover:text-zinc-200">
               View all
             </Link>
@@ -177,7 +177,7 @@ export default function DashboardPage(): JSX.Element {
         <aside className="space-y-4">
           <section className="rounded-lg border border-white/10 bg-[#111111]">
             <div className="border-b border-white/10 px-4 py-3">
-              <h2 className="text-sm font-medium text-zinc-200">Quick actions</h2>
+              <h2 className="!text-sm font-medium text-zinc-200">Quick actions</h2>
             </div>
             <div className="p-2">
               {[
@@ -200,7 +200,7 @@ export default function DashboardPage(): JSX.Element {
 
           <section className="rounded-lg border border-white/10 bg-[#111111]">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-              <h2 className="text-sm font-medium text-zinc-200">Projects</h2>
+              <h2 className="!text-sm font-medium text-zinc-200">Projects</h2>
               <Link href="/dashboard/projects" className="text-xs text-zinc-400 transition hover:text-zinc-200">
                 All
               </Link>

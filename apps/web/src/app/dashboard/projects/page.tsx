@@ -28,7 +28,7 @@ function Modal({ open, title, onClose, children }: ModalProps): JSX.Element | nu
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
       <div className="w-full max-w-md rounded-lg border border-white/10 bg-[#111111] p-4" onClick={(event) => event.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold tracking-tight text-zinc-100">{title}</h2>
+          <h2 className="!text-sm font-semibold tracking-tight text-zinc-100">{title}</h2>
           <button type="button" onClick={onClose} className="rounded border border-white/10 p-1 text-zinc-400 transition hover:bg-white/5 hover:text-zinc-200" aria-label="Close">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -271,7 +271,7 @@ export default function ProjectsPage(): JSX.Element {
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white">Projects</h1>
+          <h1 className="!text-2xl font-semibold tracking-tight text-white">Projects</h1>
           <p className="mt-1 text-sm text-zinc-400">Organize agents and isolate attack surfaces per product stream.</p>
         </div>
         <button
@@ -289,7 +289,7 @@ export default function ProjectsPage(): JSX.Element {
       <div className={`grid gap-4 ${selectedProject ? 'xl:grid-cols-[360px_1fr]' : 'grid-cols-1'}`}>
         <section className="rounded-lg border border-white/10 bg-[#111111]">
           <div className="border-b border-white/10 px-4 py-3">
-            <h2 className="text-sm font-medium text-zinc-200">Project list</h2>
+            <h2 className="!text-sm font-medium text-zinc-200">Project list</h2>
           </div>
 
           {loadingProjects ? (
@@ -353,7 +353,7 @@ export default function ProjectsPage(): JSX.Element {
           <section className="rounded-lg border border-white/10 bg-[#111111]">
             <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
               <div>
-                <h2 className="text-sm font-semibold text-zinc-100">{selectedProject.name}</h2>
+                <h2 className="!text-sm font-semibold text-zinc-100">{selectedProject.name}</h2>
                 <p className="mt-0.5 text-xs text-zinc-500">{selectedProject.id}</p>
               </div>
               <button
